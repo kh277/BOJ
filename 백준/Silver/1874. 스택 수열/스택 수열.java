@@ -22,8 +22,6 @@ public class Main {
         boolean key = true;
         int front = 1;
         String text = "";
-        // 4 3 6 8 7 5 2 1
-        // 1 2 3 4 5 6 7 8
         // 수열의 초항, 1~ex[0]까지의 자연수 스택 삽입
         for (int i = 1; i <= ex[0]; i++) {
             stack.push(i);
