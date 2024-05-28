@@ -6,15 +6,6 @@ import sys
 input = sys.stdin.readline
 
 
-def clean_check_all(N: int, M: int, graph: list) -> int:
-    for y in range(N):
-        for x in range(M):
-            if graph[y][x] == 0:
-                return False
-    
-    return True
-
-
 def clean_check_4point(N: int, M: int, graph: list, cur: list) -> int:
     pointX = [0, 1, 0, -1]
     pointY = [-1, 0, 1, 0]
