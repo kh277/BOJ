@@ -20,9 +20,9 @@ def solve(N: int, cost: list) -> int:
 
 def main():
     N = int(input())
-    cost = [None for _ in range(N)]
+    cost = []
     for i in range(N):
-        cost[i] = list(map(int, input().split()))
+        cost.append(list(map(int, input().split())))
 
     print(solve(N, cost))
 
