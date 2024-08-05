@@ -14,7 +14,7 @@ import sys
 input = sys.stdin.readline
 INF = 10e7
 
-def Floyd_Warshall(N: int, M: int, graph: list) -> int:
+def Floyd_Warshall(N: int, graph: list) -> list:
     # 자기에게로의 간선은 0으로 초기화
     for i in range(1, N+1):
         graph[i][i] = 0
@@ -44,7 +44,7 @@ def main():
         a, b, c = map(int, input().split())
         graph[a][b] = min(c, graph[a][b])
     
-    for i in Floyd_Warshall(N, M, graph):
+    for i in Floyd_Warshall(N, graph):
         print(*i)
 
 
