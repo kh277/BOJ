@@ -21,15 +21,18 @@ def solve(N: int, M: int, K: int, orange: list) -> int:
     DP[0] = 0
 
     for i in range(1, N+1):
+        max_data = orange[i]
+        min_data = orange[i]
+
         for j in range(1, M+1):
             # 음수 인덱스를 참조하게 되는 경우 탈출
             if i < j:
                 break
+            
+            # 최대값, 최소값 갱신
+            max_data = max(max_data, orange[i-j+1])
+            min_data = min(min_data, orange[i-j+1])
 
-            # 최대값 및 최소값 찾기
-            max_data = max(orange[i-j+1:i+1])
-            min_data = min(orange[i-j+1:i+1])
-                
             # 1~(i-j)번째 까지 오렌지 최소값 + (i-j+1)~i번째까지 오렌지를 한 상자에 담았을 때의 값
             # 이전에 저장한 값과 비교하여 갱신
             DP[i] = min(DP[i], DP[i-j] + K + j*(max_data - min_data))
