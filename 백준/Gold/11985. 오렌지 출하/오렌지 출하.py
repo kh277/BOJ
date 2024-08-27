@@ -13,21 +13,28 @@ DP[i] = min((DP[i-1] + 상자에 i번째 오렌지를 넣는 경우),
 import sys
 
 input = sys.stdin.readline
+INF = 10e13
 
 
 def solve(N: int, M: int, K: int, orange: list) -> int:
-    DP = [0 for _ in range(N+1)]
+    DP = [INF for _ in range(N+1)]
+    DP[0] = 0
 
     for i in range(1, N+1):
-        temp = []
         for j in range(1, M+1):
+            # 음수 인덱스를 참조하게 되는 경우 탈출
             if i < j:
-                continue
-            # 1~(i-j)번째 까지 오렌지 최소값 + (i-j+1)~i번째까지 오렌지를 한 상자에 담았을 때의 값
-            temp.append(DP[i-j] + K + j*(max(orange[i-j+1:i+1]) - min(orange[i-j+1:i+1])))
-        DP[i] = min(temp)
+                break
 
-    return DP[-1]
+            # 최대값 및 최소값 찾기
+            max_data = max(orange[i-j+1:i+1])
+            min_data = min(orange[i-j+1:i+1])
+                
+            # 1~(i-j)번째 까지 오렌지 최소값 + (i-j+1)~i번째까지 오렌지를 한 상자에 담았을 때의 값
+            # 이전에 저장한 값과 비교하여 갱신
+            DP[i] = min(DP[i], DP[i-j] + K + j*(max_data - min_data))
+
+    return DP[N]
 
 
 def main():
