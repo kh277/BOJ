@@ -2,6 +2,8 @@
 
 '''
 anta + (0~7개의 글자) + tica로 이루어지기 때문에 a, c, i, n, t는 반드시 포함되어야 함.
+비트마스킹을 이용하여 집합 처리 시간을 줄임.
+또한, 이미 계산한 alpha 상태를 memo에 저장하여 중복 계산을 줄임.
 '''
 
 import sys
@@ -12,8 +14,11 @@ char = [1, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24,
 memo = {}
 
 def recur(N: int, K: int, check: list, alpha: bin, idx: int) -> int:
+    # 이미 처리한 결과에 대해서 생략
     if (K, alpha) in memo:
         return memo[(K, alpha)]
+    
+    # 재귀 마지막에 도달한 경우
     if K == 0:
         result = 0
 
@@ -24,6 +29,7 @@ def recur(N: int, K: int, check: list, alpha: bin, idx: int) -> int:
         memo[(K, alpha)] = result
         return result
 
+    # 재귀 횟수가 남은 경우
     max_result = 0
     for i in range(idx, len(char)):
         # i번 알파벳이 alpha에 없다면 추가 (a, c, i, n, t를 제외한 0~25번 알파벳)
@@ -35,6 +41,7 @@ def recur(N: int, K: int, check: list, alpha: bin, idx: int) -> int:
 
 
 def solve(N: int, K: int, word: list) -> int:
+    # K가 5보다 작을 경우 어떤 단어도 말할 수 없게 됨
     if K < 5:
         return 0
     
