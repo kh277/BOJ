@@ -10,7 +10,7 @@
 와 같은 규칙을 가지는 것을 알 수 있다.
 
 K를 탐색할 때, 로그의 시간복잡도를 가지고,
-2^34 < 10^12 < 2^35이므로 35까지 반복하면 된다.
+2^39 < 10^12 < 2^40이므로 40까지 반복하면 된다.
 '''
 
 
@@ -31,9 +31,12 @@ def solve(K: int) -> int:
         return 1
     
     # 1이 아닌 홀수의 경우
-    for i in range(2, 36):
-        if 2**(i-1) + 1 <= abs(K) <= 2**i - 1:
-            return i
+    index = 2
+    while True:
+        if 2**(index-1) + 1 <= abs(K) <= 2**index - 1:
+            return index
+        else:
+            index += 1
 
 
 def main():
