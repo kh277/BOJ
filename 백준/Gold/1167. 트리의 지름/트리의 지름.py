@@ -10,6 +10,8 @@ V개의 정점, 및 여러 개의 간선이 존재.
 import sys
 
 input = sys.stdin.readline
+sys.setrecursionlimit(10**6)
+
 
 def DFS(graph: list, visited: list, start: int, distance: int) -> list:
     # 맨 처음 DFS를 실행한 경우 - visited 리스트 생성
