@@ -1,12 +1,17 @@
-# D번
+# 백준 32770
+
+'''
+(sasa -> home -> sasa의 최단거리) = (sasa -> home의 최단거리) + (home -> sasa의 최단거리)
+'''
 
 import sys
 import heapq
 
 input = sys.stdin.readline
-INF = 10e18
+INF = 10e17
 
 
+# 다익스트라 : 우선순위 큐를 이용해 start에서 end까지 최단거리 도출
 def dijkstra(V, graph, start, end):
     DP = [INF for _ in range(V+1)]
     PriorityQueue = []
@@ -31,31 +36,29 @@ def dijkstra(V, graph, start, end):
 
 
 def solve():
+    # 딕셔너리에 시작점과 끝점의 번호 미리 할당
     dic = dict()
     dic['sasa'] = 0
     dic['home'] = 1
-    count = 3
+    count = 2
 
+    # 다른 정류장들에 대해 번호 부여 및 딕셔너리에 저장
     for i in range(N):
         if E[i][0] not in dic:
             dic[E[i][0]] = count
             count += 1
-
-        if E[i][1] == 'sasa':
-            dic['end'] = 2
-        elif E[i][1] not in dic:
+        if E[i][1] not in dic:
             dic[E[i][1]] = count
             count += 1
 
-    V = len(dic)
+    # 정류장 이름으로 이루어진 간선 정보를 숫자로 이루어진 간선으로 변환
+    V = count
     graph = [[] for _ in range(V)]
     for i in range(N):
-        if E[i][1] == 'sasa':
-            graph[dic[E[i][0]]].append([2, int(E[i][2])])
-        else:
-            graph[dic[E[i][0]]].append([dic[E[i][1]], int(E[i][2])])
+        graph[dic[E[i][0]]].append([dic[E[i][1]], int(E[i][2])])
 
-    result = dijkstra(V, graph, 0, 1) + dijkstra(V, graph, 1, 2)
+    # sasa -> home -> sasa 최단거리 도출
+    result = dijkstra(V, graph, 0, 1) + dijkstra(V, graph, 1, 0)
     if result >= INF:
         return -1
 
