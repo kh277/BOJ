@@ -22,9 +22,12 @@ def add(accSum, i, startPoint):
 
 
 def update(accSum, i, j, startPoint):
-    accSum += data[startPoint+i]*(j-i)
-    if i != j:
-        data[startPoint+j] += data[startPoint+i]
+    if i != j and startPoint+i in data:
+        accSum += data[startPoint+i]*(j-i)
+        if startPoint+j not in data:
+            data[startPoint+j] = data[startPoint+i]
+        else:
+            data[startPoint+j] += data[startPoint+i]
         data[startPoint+i] = 0
 
     return accSum
@@ -35,11 +38,14 @@ N = int(input())
 P = list(map(int, input().split()))
 
 # 데이터 초기 처리
-data = [0 for _ in range(2000001)]
-startPoint = 1000000
+data = dict()
+startPoint = 0
 accSum = sum(P)
 for i in P:
-    data[startPoint+i] += 1
+    if startPoint+i not in data:
+        data[startPoint+i] = 1
+    else:
+        data[startPoint+i] += 1
 
 # 쿼리 처리
 Q = int(input())
