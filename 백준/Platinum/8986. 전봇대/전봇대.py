@@ -8,7 +8,7 @@
 import sys
 
 input = sys.stdin.readline
-INF = 10e10
+INF = 10e15
 
 
 def check(gap):
