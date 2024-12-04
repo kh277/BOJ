@@ -1,5 +1,1 @@
-a = int(input())
-if a <= 2:
-    print(a)
-else:
-    print(2*a - 2)
+print(max(1, 2*int(input())-2))
