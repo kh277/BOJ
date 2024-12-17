@@ -1,8 +1,8 @@
 # 백준 32195
 
-import sys
+import io
 
-input = sys.stdin.readline
+input = io.BufferedReader(io.FileIO(0), 1 << 18).readline
 
 
 # 파울 여부 체크
