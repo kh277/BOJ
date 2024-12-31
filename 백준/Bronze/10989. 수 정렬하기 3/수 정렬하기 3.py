@@ -1,8 +1,8 @@
 # 백준 10989
 
-import sys
+import io
 
-input = sys.stdin.readline
+input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 # main 함수 ----------
