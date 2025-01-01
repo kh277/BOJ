@@ -1,8 +1,8 @@
 # 백준 19843
 
-import io
+import sys
 
-input = io.BufferedReader(io.FileIO(0), 1<<18).readline
+input = sys.stdin.readline
 month = {'Mon':0, 'Tue':1, 'Wed':2, 'Thu':3, 'Fri':4}
 
 
@@ -18,6 +18,6 @@ def solve():
 N, M = map(int, input().split())
 time = []
 for _ in range(M):
-    time.append(list(map(str, input().rstrip().decode().split())))
+    time.append(list(map(str, input().split())))
 
 print(solve())
