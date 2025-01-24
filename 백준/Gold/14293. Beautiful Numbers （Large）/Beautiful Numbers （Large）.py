@@ -20,11 +20,7 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 # r, x가 주어질 때, x^0 + x^1 + ... x^(r-1)의 값 반환
 def check(r, x):
-    first = 0
-    for i in range(r):
-        first += x**i
-
-    return first
+    return (x**r - 1)//(x-1)
 
 
 def solve(N):
