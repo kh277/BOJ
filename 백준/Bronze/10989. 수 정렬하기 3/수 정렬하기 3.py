@@ -1,14 +1,10 @@
 # 백준 10989
 
-import io
-import os
-
-input = io.BufferedReader(io.FileIO(0), 1<<18).readline
-print = os.write
-CHUNK = 4096
+import io, os
 
 
 def main():
+    input = io.BufferedReader(io.FileIO(0), 1<<18).readline
     N = int(input())
     count = [0] * 10001
 
@@ -30,19 +26,19 @@ def main():
             buf.extend(line * cur)
         else:
             if buf:
-                print(1, buf)
+                os.write(1, buf)
                 buf = bytearray()
             while cur:
                 k = cur if cur < 4096 else 4096
-                print(1, line * k)
+                os.write(1, line * k)
                 cur -= k
         
         if len(buf) > 65536:
-            print(1, buf)
+            os.write(1, buf)
             buf = bytearray()
 
     if buf:
-        print(1, buf)
+        os.write(1, buf)
 
     os._exit(0)
 
