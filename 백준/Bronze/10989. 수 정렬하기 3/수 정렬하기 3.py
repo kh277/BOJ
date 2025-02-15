@@ -1,12 +1,13 @@
 # 백준 10989
 
 import io, os
+from array import array
 
 
 def main():
     input = io.BufferedReader(io.FileIO(0), 1<<18).readline
     N = int(input())
-    count = [0] * 10001
+    count = array('I', [0]) * 10001
 
     for _ in range(N):
         count[int(input())] += 1
