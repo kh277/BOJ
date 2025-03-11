@@ -5,12 +5,13 @@ A+B, C+D로 가능한 경우의 수를 전부 세고 투 포인터를 이용해 
 '''
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def getSumList(A, B):
-    result = []
+    result = array('i')
     for i in A:
         for j in B:
             result.append(i+j)
@@ -81,7 +82,7 @@ def solve(num):
 def main():
     N = int(input())
 
-    num = [[], [], [], []]
+    num = [array('i'), array('i'), array('i'), array('i')]
     for _ in range(N):
         temp = list(map(int, input().split()))
         for i in range(4):
