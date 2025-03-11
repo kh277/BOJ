@@ -19,36 +19,6 @@ def getSumList(A, B):
     return result
 
 
-# arr에서 target 이상인 첫 번째 요소의 인덱스 반환
-def LowerBound(arr, target):
-    start = 0
-    end = len(arr)
-
-    while start < end:
-        mid = (start+end)//2
-        if arr[mid] < target:
-            start = mid+1
-        else:
-            end = mid
-
-    return start
-
-
-# arr에서 target보다 큰 첫 번째 요소의 인덱스 반환
-def UpperBound(arr, target):
-    start = 0
-    end = len(arr)
-
-    while start < end:
-        mid = (start+end)//2
-        if arr[mid] <= target:
-            start = mid+1
-        else:
-            end = mid
-
-    return start
-
-
 def solve(num):
     numA = sorted(getSumList(num[0], num[1]))
     numB = sorted(getSumList(num[2], num[3]))
@@ -65,12 +35,20 @@ def solve(num):
 
         cur = numA[startP] + numB[endP]
 
-        # 일치하는 값을 찾은 경우 -> 이분 탐색 2번으로 동일한 숫자 개수 찾기
+        # 일치하는 값을 찾은 경우 -> 한 칸씩 이동하며 탐색
         if cur == 0:
-            endNumA = UpperBound(numA, numA[startP]) - 1
-            endNumB = LowerBound(numB, numB[endP])
-            result += (endNumA-startP+1)*(endP-endNumB+1)
-            startP = endNumA+1
+            tempA = startP+1
+            while tempA < len(numA) and numA[startP] == numA[tempA]:
+                tempA += 1
+
+            tempB = endP-1
+            while tempB >= 0 and numB[endP] == numB[tempB]:
+                tempB -= 1
+
+            result += (tempA-startP)*(endP-tempB)
+            startP = tempA
+            endP = tempB
+
         elif cur > 0:
             endP -= 1
         else:
