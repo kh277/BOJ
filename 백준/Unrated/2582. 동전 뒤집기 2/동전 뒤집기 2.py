@@ -10,8 +10,8 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 DECREASE_RATE = 0.9999      # 감쇄율
 BOLTZMANN_CONSTANT = 10     # 볼츠만 상수
 MAX_EXPONENT = 700          # e^x를 계산하기 위한 값의 상한치
-curTemperature = 1          # 시작 온도
-limitTemperature = 0.0005   # 임계 온도
+curT = 1                    # 시작 온도
+limitT = 0.0005             # 임계 온도
 
 
 def scoring(coin):
@@ -34,11 +34,11 @@ def move(N, coin):
 
 
 def SimilatedAnnealing(N, coin):
-    global curTemperature
+    global curT
 
     result = 1025
     # 임계 온도에 도달할 때까지 반복
-    while curTemperature > limitTemperature:
+    while curT > limitT:
         curState = coin[:]
 
         # 다음 상태로 전이 및 에너지 계산
@@ -48,12 +48,14 @@ def SimilatedAnnealing(N, coin):
 
         # 랜덤한 확률로 상태 전이
         # 에너지가 커진다면 거의 무조건 전이, 에너지가 작아진다면 확률적으로 전이
-        probability = exp(min(MAX_EXPONENT, (nextEnergy - curEnergy) / (BOLTZMANN_CONSTANT * curTemperature)))
+        probability = exp(min(MAX_EXPONENT, (curEnergy - nextEnergy) / (BOLTZMANN_CONSTANT * curT)))
         if (probability >= random.random()):
             coin = nextState
+        else:
+            coin = curState
 
         # 온도 감률 적용
-        curTemperature *= DECREASE_RATE
+        curT *= DECREASE_RATE
         result = min(result, scoring(coin))
 
     return result
@@ -67,7 +69,11 @@ def main():
         for ch in string:
             coin.append(1 if ch == 'T' else 0)
 
-    print(SimilatedAnnealing(N, coin))
+    result = 1025
+    # 담금질 기법 1000회 시행
+    for _ in range(1000):
+        result = min(result, SimilatedAnnealing(N, coin[:]))
+    print(result)
 
 
 main()
