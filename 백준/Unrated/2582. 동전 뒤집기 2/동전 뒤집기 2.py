@@ -1,16 +1,16 @@
 # 백준 2582
 
 import io
-from random import random
+import random
 from copy import deepcopy
 from math import exp
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
-DECREASE_RATE = 0.9999      # 감쇄율
+DECREASE_RATE = 0.9998      # 감쇄율
 BOLTZMANN_CONSTANT = 10     # 볼츠만 상수
 MAX_EXPONENT = 700          # e^x를 계산하기 위한 값의 상한치
 curTemperature = 1
-limitTemperature = 0.001
+limitTemperature = 0.0005
 
 
 
@@ -20,7 +20,7 @@ def scoring(coin):
 
 def move(N, coin):
     # revCol열 뒤집기
-    revCol = int(random()*1000) % N
+    revCol = int(random.randint(0, 32768)) % N
     for y in range(N):
         coin[y][revCol] ^= 1
     
@@ -43,15 +43,17 @@ def SimilatedAnnealing(N, coin):
         # cur -> next 상태로 전이
         coin = move(N, coin)
 
-        # 점수 계산
+        # 에너지 계산
         curEnergy = scoring(curState)
         nextEnergy = scoring(coin)
 
-        probability = exp(min(MAX_EXPONENT, (nextEnergy - curEnergy) / (BOLTZMANN_CONSTANT * curTemperature)))
+        # 전이 후 에너지가 낮을 경우 확률적으로 상태 전이
+        if (nextEnergy - curEnergy) < 0:
+            probability = exp(min(MAX_EXPONENT, (nextEnergy - curEnergy) / (BOLTZMANN_CONSTANT * curTemperature)))
 
-        # 랜덤한 확률로 상태 전이
-        if (probability > random()):
-            coin = curState
+            # 랜덤한 확률로 상태 전이
+            if (probability > random.random()):
+                coin = curState
 
         # 온도 감률 적용
         curTemperature *= DECREASE_RATE
