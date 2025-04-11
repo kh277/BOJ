@@ -6,6 +6,7 @@ top, bottom의 i번째 인덱스는 높이가 i일 때 종유석, 석순의 개�
 '''
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 INF = 500001
@@ -34,8 +35,8 @@ def solve(H, top, bottom):
 
 def main():
     N, H = map(int, input().split())
-    top = [0 for _ in range(H+1)]
-    bottom = [0 for _ in range(H+1)]
+    top = array('I', [0]*(H+1))
+    bottom = array('I', [0]*(H+1))
     for i in range(N):
         if i % 2 == 0:
             bottom[int(input())] += 1
