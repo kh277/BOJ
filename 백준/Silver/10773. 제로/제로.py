@@ -1,9 +1,10 @@
 # 백준 10773
 
-import io
+import io, os
 from array import array
 
-input = io.BufferedReader(io.FileIO(0), 1<<18).readline
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+
 
 def main():
     K = int(input())
@@ -17,7 +18,10 @@ def main():
             stack.append(N)
             accSum += N
     
-    print(accSum)
+    out = array('I')
+    out.append(accSum)
+    os.write(1, "".join(map(str, out)).encode("ascii"))
+    os._exit(0)
 
 
 main()
