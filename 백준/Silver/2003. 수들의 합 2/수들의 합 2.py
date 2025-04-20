@@ -6,21 +6,26 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def solve(N, M, A):
-    accSum = [0 for _ in range(N)]
-    accSum[0] = A[0]
-
-    for i in range(1, N):
-        accSum[i] = accSum[i-1] + A[i]
-
+    left = 0
+    right = 0
+    accSum = A[0]
     result = 0
-    for i in range(N):
-        if accSum[i] == M:
-            result += 1
 
-    for left in range(N):
-        for right in range(left, N):
-            if accSum[right] - accSum[left] == M: 
-                result += 1
+    while right < N:
+        if accSum < M:
+            right += 1
+            if right == N:
+                break
+            accSum += A[right]
+        elif accSum > M:
+            accSum -= A[left]
+            left += 1
+        else:
+            result += 1
+            right += 1
+            if right == N:
+                break
+            accSum += A[right]
 
     return result
 
