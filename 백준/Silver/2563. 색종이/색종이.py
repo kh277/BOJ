@@ -1,19 +1,21 @@
 # 백준 2563
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def solve(N, paper):
-    data = [[0 for _ in range(100)] for _ in range(100)]
+    data = array('I', [0]) * (100*100)
     for i in range(N):
         startX, startY = paper[i]
-        for y in range(startY, startY+10):
+        for y in range(10):
+            curY = 100*(startY+y)
             for x in range(startX, startX+10):
-                data[y][x] = 1
+                data[curY+x] = 1
 
-    return sum([sum(i) for i in data])
+    return sum(data)
 
 
 def main():
