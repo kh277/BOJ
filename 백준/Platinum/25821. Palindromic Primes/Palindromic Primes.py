@@ -32,7 +32,7 @@ def millerRabin(num, base):
 
 # 밀러-라빈 소수판별법
 def isPrime(num):
-    test = [2, 325, 9375, 28178, 450775, 9780504, 1795265022]
+    test = [2, 3, 5, 7, 11, 13, 17]
     for i in test:
         if num == i:
             return True
