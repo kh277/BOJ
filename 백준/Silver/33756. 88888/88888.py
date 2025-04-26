@@ -12,7 +12,7 @@ def solve(N):
     
     cur = len(eight)-1
     count = 0
-    while N > 0:
+    while N > 0 and cur >= 0:
         if count > 8:
             break
 
@@ -23,7 +23,7 @@ def solve(N):
         N -= eight[cur]
         count += 1
 
-    return 'No' if count > 8 else 'Yes'
+    return 'Yes' if count <= 8 and N == 0 else 'No'
 
 
 def main():
