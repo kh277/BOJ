@@ -1,27 +1,24 @@
 # 백준 7983
 
+'''
+마감 시간이 오래 남은 작업부터 앞쪽으로 스케줄링하면 된다.
+'''
+
 import io
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def solve(N, task):
-    task.sort(key= lambda x: (-x[1], x[0]))
-
+    task.sort(key= lambda x: -x[1])
     deadline = task[0][1]
-    index = 0
 
-    # 마감 시간이 긴 작업부터 스케줄링
-    while index < N:
-        curD, curT = task[index]
-
+    for i in range(N):
+        curD, curT = task[i]
         if curT < deadline:
             deadline = curT
-            continue
-
         deadline -= curD
-        index += 1
-    
+
     return deadline
 
 
