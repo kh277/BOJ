@@ -47,13 +47,15 @@ def combine(leftNode, rightNode):
             leftNode[3] + rightNode[3]]
 
 
-# 세그먼트 트리 구성
-def init(N, tree):
-    for i in range(N-1, 0, -1):
-        left = i<<1
-        right = i<<1 | 1
+# index번째 노드에 값 추가 및 노드 갱신
+def update(N, tree, index, value):
+    index += N
+    for i in range(4):
+        tree[index][i] += value
 
-        tree[i] = combine(tree[left], tree[right])
+    while index > 1:
+        index >>= 1
+        tree[index] = combine(tree[index<<1], tree[index<<1 | 1])
 
 
 def solve(N, point):
@@ -81,11 +83,9 @@ def solve(N, point):
         for endY in range(startY, maxY+1):
             # y좌표가 구간 [beforeY, endY]에 속하는 점들의 개발 이익를 세그먼트 트리에 추가
             for i in range(startIndexY[beforeY], startIndexY[endY+1]):
-                for j in range(4):
-                    tree[point[i][0]+treeSize][j] += point[i][2]
+                update(treeSize, tree, point[i][0], point[i][2])
 
             # 3. y좌표가 구간 [startY, endY]에 속하는 점들에 대해 최대 연속합 구하기
-            init(treeSize, tree)
             result = max(result, tree[1][2])
 
             beforeY = endY+1
