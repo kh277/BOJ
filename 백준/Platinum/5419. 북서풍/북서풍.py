@@ -1,17 +1,8 @@
 # 백준 5419
 
-'''
-어떤 점 (a, b)가 있다고 가정하면, x>=a, y<=b인 점의 개수를 구해야 한다.
-이 쿼리를 모든 점에 대해 반복해야 한다.
-따라서 N개의 점에 대해 logN의 시간으로 점의 개수를 구해야 O(NlogN)이 되고, 시간 내에 통과할 수 있게 된다.
+import io
 
-해당 쿼리를 처리하려면 모든 x좌표 범위에 대해 트리를 만들고, y좌표가 가장 작은 점부터 순서대로 세그먼트 트리에 추가를 하면서 쿼리를 처리한다.
-다만, 점의 범위가 +- 10^9이므로 좌표 압축을 해야 한다.
-'''
-
-import sys
-
-input = sys.stdin.readline
+input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 # 세그먼트 트리 구성
@@ -35,7 +26,7 @@ def query(N, tree, left, right):
     result = 0
     left += N
     right += N
-    
+
     while left <= right:
         if left & 1:
             result += tree[left]
@@ -74,7 +65,7 @@ def solve(N, point):
     # y좌표가 커지도록, x좌표가 작아지도록 정렬
     point.sort(key= lambda x: (x[1], -x[0]))
 
-    # 세그먼트 트리 기본 설정
+    # 세그먼트 트리 설정
     tree = [0 for _ in range(N*2)]
 
     # y좌표가 작은 점들부터 세그먼트 트리에 추가 및 쿼리 처리
@@ -88,12 +79,15 @@ def solve(N, point):
     return result
 
 
-# main 함수 ----------
-T = int(input())
-for _ in range(T):
-    N = int(input())
-    point = []
-    for _ in range(N):
-        point.append(list(map(int, input().split())))
-    
-    print(solve(N, point))
+def main():
+    T = int(input())
+    for _ in range(T):
+        N = int(input())
+        point = []
+        for _ in range(N):
+            point.append(list(map(int, input().split())))
+
+        print(solve(N, point))
+
+
+main()
