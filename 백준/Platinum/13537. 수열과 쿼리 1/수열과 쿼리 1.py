@@ -1,6 +1,7 @@
 # 백준 13537
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
@@ -31,7 +32,7 @@ def upperBound(arr, target):
 # 배열 left, right 병합
 def merge(left, right):
     l, r = 0, 0
-    result = []
+    result = array('I')
     while l < len(left) and r < len(right):
         if left[l] < right[r]:
             result.append(left[l])
@@ -71,7 +72,7 @@ def query(N, tree, left, right, value):
 
 # 세그먼트 트리 빌드
 def build(N, A):
-    tree = [[] for _ in range(N*2)]
+    tree = [array('I') for _ in range(N*2)]
     for i in range(len(A)):
         tree[N+i].append(A[i])
 
