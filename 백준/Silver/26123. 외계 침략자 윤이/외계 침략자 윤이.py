@@ -6,8 +6,6 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def solve(N, D, H):
-    H.sort(reverse=True)
-
     maxH = max(H)
     afterH = max(0, maxH-D)
     result = 0
