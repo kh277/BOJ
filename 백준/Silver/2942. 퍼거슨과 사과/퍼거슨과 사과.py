@@ -12,17 +12,23 @@ def GCD(a, b):
 
 
 def solve(R, G):
+    # 최대공약수 구하기
     gcd = GCD(R, G)
     
-    factors = []
-    for i in range(1, gcd+1):
+    # 최대공약수의 약수 구하기
+    factors = set()
+    i = 1
+    while i*i <= gcd:
         if gcd % i == 0:
-            factors.append(i)
+            factors.add(i)
+            factors.add(gcd//i)
+        i += 1
 
+    # 조합 저장
     result = []
-    for i in factors:
+    for i in list(factors):
         result.append([i, R//i, G//i])
-    
+
     return result
 
 
