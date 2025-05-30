@@ -1,46 +1,46 @@
 # 백준 10830
 
-import sys
+import io
 
-input = sys.stdin.readline
+input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 MOD = 1000
 
 
-def matrixMul(A, B):
-    result = [[0 for _ in range(N)] for _ in range(N)]
-    
-    for i in range(N):
-        for j in range(N):
-            for k in range(N):
+def matrixMul(size, A, B):
+    result = [[0 for _ in range(size)] for _ in range(size)]
+    for i in range(size):
+        for j in range(size):
+            for k in range(size):
                 result[i][j] = (result[i][j] + A[i][k]*B[k][j]) % MOD
 
     return result
 
 
-def recur(A, powerCount):
-    if powerCount == 1:
-        # MOD가 1000이지만, 원소의 값이 1000일 수 있으므로
-        for i in range(N):
-            for j in range(N):
-                A[i][j] = A[i][j] % MOD
-        return A
+def solve(A, exp, size):
+    R = [[0] * size for _ in range(size)]
+    base = [i[:] for i in A]
+    for y in range(size):
+        for x in range(size):
+            if y == x:
+                R[y][x] = 1
 
-    elif powerCount == 2:
-        return matrixMul(A, A)
+    while exp:
+        if exp & 1:
+            R = matrixMul(size, R, base)
 
-    elif powerCount % 2 == 0:
-        result = recur(A, powerCount//2)
-        return matrixMul(result, result)
+        base = matrixMul(size, base, base)
+        exp >>= 1
 
-    else:
-        result = recur(A, (powerCount-1)//2)
-        return matrixMul(matrixMul(result, result), A)
+    return R
 
 
-# main 함수 ----------
-N, B = map(int, input().split())
-M = []
-for _ in range(N):
-    M.append(list(map(int, input().split())))
-for i in recur(M, B):
-    print(*i)
+def main():
+    N, B = map(int, input().split())
+    A = []
+    for _ in range(N):
+        A.append(list(map(int, input().split())))
+    for i in solve(A, B, N):
+        print(*i)
+
+
+main()
