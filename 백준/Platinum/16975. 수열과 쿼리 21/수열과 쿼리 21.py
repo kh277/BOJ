@@ -1,16 +1,10 @@
 # 백준 16975
 
-'''
-수열 A을 기준으로 세그먼트 트리를 만든다. (0~N-1)
-세그먼트 트리의 리프 노드에는 [i, N-1]에 대한 변화량을 저장한다.
-tree[i]의 값은 A[i] + (구간 [0, i]의 총합)을 구하는 것과 같다.
-
-= 점 쿼리, 구간 업데이트
-'''
-
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
+ARRAY_TYPE = 'l'
 
 
 # num이상의 2의 제곱수 반환
@@ -22,28 +16,44 @@ def square(num):
         result *= 2
 
 
-# 세그먼트 트리 구성
-def init(N, tree):
-    for i in range(N-1, 0, -1):
-        tree[i] = tree[i<<1] + tree[i<<1 | 1]
+# 크기가 N인 세그먼트 트리 빌드
+def build(N, A):
+    tree = array(ARRAY_TYPE, [0]) * (N*2)
+    for i in range(len(A)):
+        tree[N+i] = A[i]
 
-
-# tree[index]에 value만큼 값 추가, 트리 갱신
-def update(N, tree, index, value):
-    index += N
-    tree[index] += value
-    
     while index > 1:
         index >>= 1
         tree[index] = tree[index<<1] + tree[index<<1 | 1]
 
+    return tree
 
-# 구간 [left, right]에서 리프 노드의 총합 반환
-def query(N, tree, left, right):
-    result = 0
+
+# 0-base, 구간 [left, right]에 +value를 처리하는 쿼리
+def imosUpdate(N, tree, left, right, value):
+    # 왼쪽 구간 처리
     left += N
-    right += N
-    
+    tree[left] += value
+    while left > 1:
+        left >>= 1
+        tree[left] = tree[left<<1] + tree[left<<1 | 1]
+
+    # 오른쪽 구간 처리
+    right += 1
+    if right < N:
+        right += N
+        tree[right] -= value
+        while right > 1:
+            right >>= 1
+            tree[right] = tree[right<<1] + tree[right<<1 | 1]
+
+
+# tree[index]의 값을 구하는 쿼리
+def imosQuery(N, tree, index):
+    result = 0
+    left = N
+    right = N + index
+
     while left <= right:
         if left & 1:
             result += tree[left]
@@ -51,32 +61,28 @@ def query(N, tree, left, right):
         if ~right & 1:
             result += tree[right]
             right -= 1
-            
+
         left >>= 1
         right >>= 1
-    
+
     return result
 
 
-# main 함수 ----------
-N = int(input())
-tempN = square(N+1)
+def main():
+    N = int(input())
+    size = square(N)
+    num = list(map(int, input().split()))
+    tree = array(ARRAY_TYPE, [0]) * (size*2)
 
-# 초기 설정
-tree = [0 for _ in range(2*tempN)]
-a = list(map(int, input().split()))
+    Q = int(input())
+    for _ in range(Q):
+        q = list(map(int, input().split()))
+        if q[0] == 1:
+            _, i, j, k = q
+            imosUpdate(size, tree, i-1, j-1, k)
+        else:
+            x = q[1]
+            print(num[x-1] + imosQuery(size, tree, x-1))
 
 
-# 쿼리 처리
-M = int(input())
-for _ in range(M):
-    q = list(map(int, input().split()))
-
-    # 1 i j k : 구간 합 쿼리
-    if q[0] == 1:
-        update(tempN, tree, q[1], q[3])
-        if q[2] <= N-1:
-            update(tempN, tree, q[2]+1, -q[3])
-    # 2 x : 특정 값 반환
-    else:
-        print(a[q[1]-1] + query(tempN, tree, 0, q[1]))
+main()
