@@ -1,26 +1,26 @@
 # 백준 17129
 
 import io
-from array import array
 from collections import deque
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
-def findPos(N, M, grid, strType):
+def findPos(N, M, grid):
     for y in range(N):
         for x in range(M):
-            if grid[y][x] == strType:
+            if grid[y][x] == 2:
                 return [y, x]
 
 
 def BFS(N, M, grid, start):
     dx = [-1, 1, 0, 0]
     dy = [0, 0, -1, 1]
-    visited = [array('I', [0])*M for _ in range(N)]
+
     q = deque()
-    q.append([start[0], start[1], 0])
-    visited[start[0]][start[1]] = 1
+    q.append((start[0], start[1], 0))
+    grid[start[0]][start[1]] = 1
 
     while q:
         curY, curX, move = q.popleft()
@@ -29,29 +29,23 @@ def BFS(N, M, grid, start):
             nextX = curX + dx[i]
             nextY = curY + dy[i]
 
-            if 0 <= nextX < M and 0 <= nextY < N and visited[nextY][nextX] == 0:
-                if grid[nextY][nextX] in [3, 4, 5]:
+            if 0 <= nextX < M and 0 <= nextY < N and grid[nextY][nextX] != 1:
+                if grid[nextY][nextX] in {3, 4, 5}:
                     return ['TAK', move+1]
-                elif grid[nextY][nextX] == 0:
-                    q.append([nextY, nextX, move+1])
-                    visited[nextY][nextX] = 1
+                q.append((nextY, nextX, move+1))
+                grid[nextY][nextX] = 1
 
     return ['NIE']
 
 
-def solve(N, M, grid):
-    start = findPos(N, M, grid, 2)
-    return BFS(N, M, grid, start)
+def solve(N, M, A):
+    start = findPos(N, M, A)
+    return BFS(N, M, A, start)
 
 
 def main():
     N, M = map(int, input().split())
-    A = [array('I', [0])*M for _ in range(N)]
-    for y in range(N):
-        x = 0
-        for i in list(map(str, input().decode().strip())):
-            A[y][x] = int(i)
-            x += 1
+    A = [list(map(int, input().decode().strip())) for _ in range(N)]
 
     for i in solve(N, M, A):
         print(i)
