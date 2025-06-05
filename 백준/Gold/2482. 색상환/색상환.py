@@ -6,6 +6,7 @@ DP[y][x] = DP[y][x-1] + DP[y-1][x-2]
 '''
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 MOD = 10**9+3
@@ -16,7 +17,7 @@ def solve(N, K):
         return 0
 
     # 1. 0번에 색을 칠하는 경우
-    DP = [[0 for _ in range(N)] for _ in range(N//2+1)]
+    DP = [array('I', [0])*N for _ in range(N//2+1)]
     DP[1][0] = 1
     for y in range(2, N//2+1):
         for x in range(y, N):
@@ -28,7 +29,7 @@ def solve(N, K):
         result = (result + DP[K][x]) % MOD
 
     # 2. 0번에 색을 칠하지 않는 경우
-    DP = [[0 for _ in range(N)] for _ in range(N//2+1)]
+    DP = [array('I', [0])*N for _ in range(N//2+1)]
     for x in range(1, N):
         DP[1][x] = 1
     for y in range(2, N//2+1):
