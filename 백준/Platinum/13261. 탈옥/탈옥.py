@@ -15,24 +15,6 @@ import io
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
-def recur(DP, accSum, curGuard, start, end, optStart, optEnd):
-    mid = (start+end)//2
-    divide = -1
-
-    # 하위 부분 DP 계산
-    for k in range(optStart, min(mid, optEnd)):
-        curV = DP[curGuard-1][k] + (accSum[mid]-accSum[k])*(mid-k)
-        if divide == -1 or DP[curGuard][mid] > curV:
-            divide = k
-            DP[curGuard][mid] = curV
-
-    # 두 구간 [start, mid-1], [mid+1, end]으로 분할
-    if start <= mid-1:
-        recur(DP, accSum, curGuard, start, mid-1, optStart, divide+1)
-    if mid+1 <= end:
-        recur(DP, accSum, curGuard, mid+1, end, divide, optEnd)
-
-
 def solve(L, G, C):
     # 누적합 전처리
     accSum = [0 for _ in range(L+1)]
@@ -45,8 +27,27 @@ def solve(L, G, C):
         DP[1][i] = accSum[i] * i
 
     # DP 계산
+    stack = []
     for i in range(2, G+1):
-        recur(DP, accSum, i, 1, L, 0, L)
+        stack.append([i, 1, L, 0, L])
+
+        while stack:
+            curGuard, start, end, optStart, optEnd = stack.pop()
+            mid = (start+end)//2
+            divide = -1
+
+            # 하위 부분 DP 계산
+            for k in range(optStart, min(mid, optEnd)):
+                curV = DP[curGuard-1][k] + (accSum[mid]-accSum[k])*(mid-k)
+                if divide == -1 or DP[curGuard][mid] > curV:
+                    divide = k
+                    DP[curGuard][mid] = curV
+
+            # 두 구간 [start, mid-1], [mid+1, end]으로 분할
+            if start <= mid-1:
+                stack.append([curGuard, start, mid-1, optStart, divide+1])
+            if mid+1 <= end:
+                stack.append([curGuard, mid+1, end, divide, optEnd])
 
     return DP[G][L]
 
