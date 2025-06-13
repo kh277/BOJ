@@ -16,10 +16,6 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def recur(DP, accSum, curGuard, start, end, optStart, optEnd):
-    # 종료조건
-    if start > end:
-        return
-
     mid = (start+end)//2
     divide = -1
 
@@ -31,8 +27,10 @@ def recur(DP, accSum, curGuard, start, end, optStart, optEnd):
             DP[curGuard][mid] = curV
 
     # 두 구간 [start, mid-1], [mid+1, end]으로 분할
-    recur(DP, accSum, curGuard, start, mid-1, optStart, divide+1)
-    recur(DP, accSum, curGuard, mid+1, end, divide, optEnd)
+    if start <= mid-1:
+        recur(DP, accSum, curGuard, start, mid-1, optStart, divide+1)
+    if mid+1 <= end:
+        recur(DP, accSum, curGuard, mid+1, end, divide, optEnd)
 
 
 def solve(L, G, C):
