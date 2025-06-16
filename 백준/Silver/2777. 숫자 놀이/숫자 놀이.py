@@ -16,42 +16,21 @@ def solve(N):
     result = 0
     if len(str(N)) == 1:
         return 1
-    if N % 2 != 0 and N % 3 != 0 and N % 5 != 0 and N % 7 != 0:
-        return -1
-    
 
     while True:
-        if N % 8 == 0:
-            N = N//8
-            result += 1
-        elif N % 4 == 0:
-            N = N//4
-            result += 1
-        elif N % 6 == 0:
-            N = N//6
-            result += 1
-        elif N % 9 == 0:
-            N = N//9
-            result += 1
-        else:
-            if N % 2 == 0:
-                N = N//2
+        flag = False
+        for i in [8, 4, 6, 9, 2, 3, 5, 7]:
+            if N % i == 0:
+                N = N//i
                 result += 1
-            elif N % 3 == 0:
-                N = N//3
-                result += 1
-            elif N % 5 == 0:
-                N = N//5
-                result += 1
-            elif N % 7 == 0:
-                N = N//7
-                result += 1
-            else:
-                if N != 1:
-                    return -1
+                flag = True
                 break
-    
-    return result
+        
+        if flag == False:
+            if N == 1:
+                return result
+            else:
+                return -1
 
 
 def main():
