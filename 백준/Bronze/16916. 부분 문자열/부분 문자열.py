@@ -31,16 +31,15 @@ def KMP(text, pattern):
 
         if text[i] == pattern[j]:
             if j == len(pattern)-1:
-                result.append(i-len(pattern)+2)
-                j = fail[j]
+                return True
             else:
                 j += 1
     
-    return result
+    return False
 
 
 def solve(S, P):
-    if len(KMP(S, P)) > 0:
+    if KMP(S, P) == True:
         return 1
     return 0
 
