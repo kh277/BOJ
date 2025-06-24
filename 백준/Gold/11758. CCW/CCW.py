@@ -1,21 +1,14 @@
 # 백준 11758
 
-import sys
+import io
 
-input = sys.stdin.readline
+input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
-# 2차원 벡터의 외적값을 이용해 회전 방향 판별
-def CCW(a, b, c):
-    # 양수(반시계), 0(일직선), 음수(시계)
-    temp = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
-
-    if temp > 0:
-        return 1
-    elif temp < 0:
-        return -1
-    else:
-        return 0
+def CCW(A, B, C):
+    result = A[0]*B[1] + B[0]*C[1] + C[0]*A[1]
+    result -= B[0]*A[1] + C[0]*B[1] + A[0]*C[1]
+    return (result > 0) - (result < 0)
 
 
 def main():
