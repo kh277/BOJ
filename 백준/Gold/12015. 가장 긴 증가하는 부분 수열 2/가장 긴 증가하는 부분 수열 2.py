@@ -1,6 +1,7 @@
 # 백준 12015
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
@@ -21,7 +22,7 @@ def BinarySearch(arr, target):
 
 
 def solve(N, L):
-    stack = []
+    stack = array('I')
     stack.append(L[0])
 
     for i in range(1, N):
