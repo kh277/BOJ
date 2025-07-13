@@ -7,9 +7,7 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 # 선분 교차 판정 서브 함수
 def CCW(A, B, C):
-    result = A[0]*B[1] + B[0]*C[1] + C[0]*A[1]
-    result -= B[0]*A[1] + C[0]*B[1] + A[0]*C[1]
-    return (result > 0) - (result < 0)
+    return (B[0]-A[0]) * (C[1]-A[1]) - (B[1]-A[1]) * (C[0]-A[0])
 
 
 # 선분 교차 판정
