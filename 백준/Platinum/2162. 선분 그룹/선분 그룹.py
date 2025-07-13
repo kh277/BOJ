@@ -1,6 +1,7 @@
 # 백준 2162
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
@@ -26,46 +27,52 @@ def LineIntersection(A, B, C, D):
 
 
 def find(parent, x):
-    if parent[x] != x:
-        parent[x] = find(parent, parent[x])
+    root = x
+    while parent[root] >= 0:
+        root = parent[root]
+    
+    while x != root:
+        nextN = parent[x]
+        parent[x] = root
+        x = nextN
 
-    return parent[x]
+    return root
 
 
-def union(parent, a, b):
-    a = find(parent, a)
-    b = find(parent, b)
+def union(parent, x, y):
+    x = find(parent, x)
+    y = find(parent, y)
 
-    if a < b:
-        parent[b] = a
+    if x == y:
+        return
+
+    if parent[x] > parent[y]:
+        parent[x] = y
     else:
-        parent[a] = b
+        if parent[x] == parent[y]:
+            parent[x] -= 1
+        parent[y] = x
 
 
 def solve(N, line):
+    # 선분 교차 판정
     graph = []
     for i in range(N):
         for j in range(i+1, N):
             if LineIntersection(line[i][0], line[i][1], line[j][0], line[j][1]) == True:
                 graph.append([i, j])
 
-    parent = [i for i in range(N)]
-    for i in graph:
-        a, b = i
+    # 유니온 파인드 작업
+    parent = array('i', [-1]) * N
+    for a, b in graph:
         if find(parent, a) != find(parent, b):
             union(parent, a, b)
 
-    for i in graph:
-        a, b = i
-        if find(parent, a) != find(parent, b):
-            union(parent, a, b)
-
+    # 그룹 처리
     dic = {}
-    for num in parent:
-        if num in dic:
-            dic[num] += 1
-        else:
-            dic[num] = 1
+    for i in range(N):
+        root = find(parent, i)
+        dic[root] = dic.get(root, 0) + 1
 
     return [len(dic), max(dic.values())]
 
