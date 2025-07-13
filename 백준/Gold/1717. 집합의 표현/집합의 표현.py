@@ -1,6 +1,7 @@
 # 백준 1717
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
@@ -35,7 +36,7 @@ def union(parent, x, y):
 
 def main():
     N, M = map(int, input().split())
-    parent = [-1] * (N+1)
+    parent = array('i', [-1]) * (N+1)
     for _ in range(M):
         q, a, b = map(int, input().split())
         if q == 0:
