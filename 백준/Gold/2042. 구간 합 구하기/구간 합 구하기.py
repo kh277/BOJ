@@ -1,22 +1,26 @@
 # 백준 2042
 
-'''
-세그먼트 트리를 비재귀 형태로 구현했다.
-'''
+import io
+from array import array
 
-import sys
-
-input = sys.stdin.readline
+input = io.BufferedReader(io.FileIO(0), 1<<18).readline
+ARRAY_TYPE = 'q'
 
 
-# 세그먼트 트리 구성
-def init():
+# 크기가 N인 세그먼트 트리 빌드
+def build(N):
+    tree = array(ARRAY_TYPE, [0]) * (N*2)
+    for i in range(N):
+        tree[N+i] = int(input())
+
     for i in range(N-1, 0, -1):
         tree[i] = tree[i<<1] + tree[i<<1 | 1]
 
+    return tree
 
-# index번째 인덱스를 value로 변경
-def update(index, value):
+
+# index번째 값을 value로 변경
+def update(N, tree, index, value):
     index += N
     tree[index] = value
     
@@ -25,46 +29,38 @@ def update(index, value):
         tree[index] = tree[index<<1] + tree[index<<1 | 1]
 
 
-# left ~ right까지의 합 계산
-def query(left, right):
+# 0-base, 구간 [left, right]의 전체 합을 구하는 쿼리
+def query(N, tree, left, right):
     result = 0
     left += N
     right += N
-    
+
     while left <= right:
-        # left가 홀수라면
         if left & 1:
             result += tree[left]
             left += 1
-        # right가 홀수라면
         if ~right & 1:
             result += tree[right]
             right -= 1
-            
         left >>= 1
         right >>= 1
-    
+
     return result
 
 
-# main 함수 ----------
-N, M, K = map(int, input().split())
+def main():
+    N, M, K = map(int, input().split())
 
-a = []
-for _ in range(N):
-    a.append(int(input()))
+    # 세그먼트 트리 설정
+    tree = build(N)
 
-# 세그먼트 트리 설정
-tree = [0 for _ in range(2*N)]
-for i in range(N):
-    tree[N+i] = a[i]
-    
-init()
+    # 쿼리 입력 및 처리
+    for _ in range(M+K):
+        x, y, z = map(int, input().split())
+        if x == 1:
+            update(N, tree, y-1, z)
+        else:
+            print(query(N, tree, y-1, z-1))
 
-# 쿼리 입력 및 처리
-for _ in range(M+K):
-    x, y, z = map(int, input().split())
-    if x == 1:
-        update(y-1, z)
-    else:
-        print(query(y-1, z-1))
+
+main()
