@@ -5,18 +5,18 @@ import io
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
+def CCW(A, B, C):
+    result = (B[0]-A[0]) * (C[1]-A[1]) - (B[1]-A[1]) * (C[0]-A[0])
+    if result > 0:
+        return 1
+    elif result < 0:
+        return -1
+    else:
+        return 0
+
+
 def distance2(A, B):
     return (A[0]-B[0])**2 + (A[1]-B[1])**2
-
-
-def ShoelaceFormula(N, graph):
-    area = 0
-
-    for i in range(N):
-        j = (i+1) % N
-        area += graph[i][0]*graph[j][1] - graph[i][1]*graph[j][0]
-
-    return abs(area) / 2
 
 
 def query(S, poly, dart):
@@ -37,8 +37,8 @@ def query(S, poly, dart):
                 A = [float(poly[j][1]), float(poly[j][2])]
                 B = [float(poly[j][3]), float(poly[j][4])]
                 C = [float(poly[j][5]), float(poly[j][6])]
-                triS = ShoelaceFormula(3, [A, B, C])
-                if abs(triS - ShoelaceFormula(3, [A, B, [x, y]]) - ShoelaceFormula(3, [B, C, [x, y]]) - ShoelaceFormula(3, [C, A, [x, y]])) < 1e-6:
+                temp = CCW(A, B, [x, y])
+                if temp == CCW(B, C, [x, y]) and temp == CCW(C, A, [x, y]):
                     result += 1
 
     return result
