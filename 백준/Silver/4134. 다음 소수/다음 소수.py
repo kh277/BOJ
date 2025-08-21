@@ -51,9 +51,12 @@ def isPrime(num):
 
 
 def solve(N):
+    if N <= 2:
+        return 2
+
     cur = N
     while True:
-        if isPrime(cur) == True:
+        if cur % 2 == 1 and isPrime(cur) == True:
             return cur
         cur += 1
 
