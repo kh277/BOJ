@@ -10,14 +10,13 @@ def solve(L, K, star):
 
     result = 0
     for i in range(K):
-        startX, _ = star[i]
-        endX = startX + L
         for j in range(K):
-            _, startY = star[j]
-            endY = startY + L
+            startX = star[i][0]
+            startY = star[j][1]
+
             curStar = 0
             for k in range(K):
-                if startX <= star[k][0] <= endX and startY <= star[k][1] <= endY:
+                if startX <= star[k][0] <= startX+L and startY <= star[k][1] <= startY+L:
                     curStar += 1
             result = max(result, curStar)
 
