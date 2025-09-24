@@ -6,7 +6,6 @@
 
 import io
 import math
-from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 ARRAY_TYPE = 'I'
@@ -17,53 +16,50 @@ class LCA():
         self.N = N
         self.LOG = math.ceil(math.log2(N)) + 1
         self.graph = graph
-        self.depth = array(ARRAY_TYPE, [0]) * (N+1)
-        self.DP = [[0 for _ in range(self.LOG)] for _ in range(N+1)]
+        self.depth = [0] * (N+1)
+        self.DP = [[0] * self.LOG for _ in range(N+1)]
 
-        self.DFS(self.graph, self.depth, self.DP, root)
-        self.calDP(self.DP)
+        self.DFS(root)
+        self.calDP()
 
 
     # 각 정점별 depth 계산
-    def DFS(self, graph, depth, DP, root):
-        visited = array('q', [0]) * (self.N+1)
+    def DFS(self, root):
+        visited = [0] * (self.N+1)
 
         stack = []
         stack.append([root, 0])
-        depth[root] = 0
+        self.depth[root] = 0
         visited[root] = 1
 
         while stack:
             curV, curDepth = stack.pop()
 
-            for nextV in graph[curV]:
+            for nextV in self.graph[curV]:
                 if visited[nextV] == 0:
-                    DP[nextV][0] = curV
-                    depth[nextV] = curDepth+1
+                    self.DP[nextV][0] = curV
+                    self.depth[nextV] = curDepth+1
                     visited[nextV] ^= 1
                     stack.append([nextV, curDepth+1])
 
 
     # DP 테이블 채우기
-    def calDP(self, DP):
+    def calDP(self):
         for x in range(1, self.LOG):
             for y in range(1, self.N+1):
-                DP[y][x] = DP[DP[y][x-1]][x-1]
+                self.DP[y][x] = self.DP[self.DP[y][x-1]][x-1]
 
 
     # LCA 계산
     def LCA(self, startV, endV):
-        depth = self.depth
-        DP = self.DP
-
-        if depth[startV] < depth[endV]:
+        if self.depth[startV] < self.depth[endV]:
             startV, endV = endV, startV
 
-        gap = depth[startV] - depth[endV]
+        gap = self.depth[startV] - self.depth[endV]
         index = 0
         while gap:
             if gap & 1:
-                startV = DP[startV][index]
+                startV = self.DP[startV][index]
             gap >>= 1
             index += 1
 
@@ -71,17 +67,17 @@ class LCA():
             return startV
 
         for i in range(self.LOG-1, -1, -1):
-            if DP[startV][i] != DP[endV][i]:
-                startV = DP[startV][i]
-                endV = DP[endV][i]
+            if self.DP[startV][i] != self.DP[endV][i]:
+                startV = self.DP[startV][i]
+                endV = self.DP[endV][i]
 
-        return DP[startV][0]
+        return self.DP[startV][0]
 
 
 def main():
     N = int(input())
     root = 1
-    graph = [array(ARRAY_TYPE) for _ in range(N+1)]
+    graph = [[] for _ in range(N+1)]
     for _ in range(N-1):
         a, b = map(int, input().split())
         graph[a].append(b)
