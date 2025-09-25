@@ -1,20 +1,27 @@
 # 백준 2417
 
 import io
-import math
-from decimal import *
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
-getcontext().prec = 30
 
 
 def solve(N):
-    return math.ceil(N.sqrt())
+    start = 0
+    end = N
+
+    while start < end:
+        mid = (start+end)//2
+        if mid*mid < N:
+            start = mid+1
+        else:
+            end = mid
+
+    return start
 
 
 def main():
     N = int(input())
-    print(solve(Decimal(str(N))))
+    print(solve(N))
 
 
 main()
