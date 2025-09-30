@@ -11,8 +11,9 @@ def solve(N, A):
     left = 0
     for i in range(N):
         gap = need - A[i]
+        
         left += gap
-        result += left
+        result += abs(left)
 
     return result
 
