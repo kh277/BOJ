@@ -15,23 +15,26 @@ def solve(A):
     stack = []
     result = 0
     lazer = 0
-    index = 0
-    while index < N:
+    isLazer = False
+    for i in range(N):
+        # 이전이 레이저였다면
+        if isLazer == True:
+            isLazer = False
+            continue
+
         # 여는 괄호라면
-        if A[index] == '(':
+        if A[i] == '(':
             # 레이저라면
-            if index < N-1 and A[index+1] == ')':
-                index += 1
+            if i < N-1 and A[i+1] == ')':
                 lazer += 1
+                isLazer = True
             else:
                 stack.append(lazer)
         # 닫는 괄호라면
         else:
             start = stack.pop()
             result += lazer - start + 1
-        
-        index += 1
-    
+
     return result
 
 
