@@ -5,6 +5,7 @@
 '''
 
 import io
+from array import array
 from collections import deque
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
@@ -13,7 +14,7 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 def BFS(N, graph):
     result = 0
     q = deque()
-    visited = [0 for _ in range(N+1)]
+    visited = array('q', [0]) * (N+1)
     q.append(1)
     visited[1] = 1
 
