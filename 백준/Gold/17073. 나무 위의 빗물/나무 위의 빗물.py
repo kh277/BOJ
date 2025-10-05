@@ -13,7 +13,7 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 def BFS(N, graph):
     result = 0
     q = deque()
-    visited = bytearray(N+1)
+    visited = [0 for _ in range(N+1)]
     q.append(1)
     visited[1] = 1
 
