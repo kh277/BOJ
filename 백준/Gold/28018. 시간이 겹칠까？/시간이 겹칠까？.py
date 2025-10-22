@@ -8,12 +8,11 @@ import io
 from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
-INF = 1000010
+INF = 1000003
 
 
 def main():
     N = int(input())
-    MAX = -1
 
     # 차분 배열에 저장
     time = array('i', [0]) * INF
@@ -21,7 +20,6 @@ def main():
         a, b = map(int, input().split())
         time[a] += 1
         time[b+1] -= 1
-        MAX = max(MAX, b+1)
 
     # 누적합 계산
     accSum = array('i', [0]) * INF
