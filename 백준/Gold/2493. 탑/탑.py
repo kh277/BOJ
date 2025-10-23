@@ -7,21 +7,25 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def solve(N, tower):
-    stack = [(tower[0], 1)]
+    stackH = [tower[0]]
+    stackI = [1]
     result = array('I', [0])
 
     for i in range(1, N):
-        while stack:
-            curH, curI = stack[-1]
+        while stackH:
+            curH = stackH[-1]
             if tower[i] < curH:
-                result.append(curI)
-                stack.append((tower[i], i+1))
+                result.append(stackI[-1])
+                stackH.append(tower[i])
+                stackI.append(i+1)
                 break
-            stack.pop()
+            stackH.pop()
+            stackI.pop()
 
-        if not stack:
+        if not stackH:
             result.append(0)
-            stack.append((tower[i], i+1))
+            stackH.append(tower[i])
+            stackI.append(i+1)
 
     return result
 
