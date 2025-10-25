@@ -1,13 +1,14 @@
 # 백준 25195
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def DFS(graph, fan):
     start = 1
-    stack = []
+    stack = array('I')
     stack.append(start)
 
     while stack:
@@ -27,7 +28,7 @@ def DFS(graph, fan):
 
 def main():
     N, M = map(int, input().split())
-    graph = [[] for _ in range(N+1)]
+    graph = [array('I') for _ in range(N+1)]
     for _ in range(M):
         a, b = map(int, input().split())
         graph[a].append(b)
