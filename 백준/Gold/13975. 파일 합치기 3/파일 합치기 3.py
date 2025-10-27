@@ -13,7 +13,7 @@ def solve(N, L):
     heapq.heapify(L)
 
     cost = 0
-    while len(L) > 1:
+    for _ in range(N-1):
         A = heapq.heappop(L)
         B = heapq.heappop(L)
         cost += A+B
