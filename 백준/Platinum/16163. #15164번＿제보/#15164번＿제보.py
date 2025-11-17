@@ -1,4 +1,4 @@
-# 백준 13275
+# 백준 16163
 
 import io
 from array import array
@@ -26,7 +26,11 @@ def Manacher(string):
             radius = i + P[i]
             center = i
 
-    return sum([P[i]//2 for i in range(1, len(P)-1)])
+    # 팰린드롬 부분 문자열의 개수 구하기
+    result = 0
+    for i in range(1, len(text)-1):
+        result += P[i]//2
+    return result
 
 
 def main():
