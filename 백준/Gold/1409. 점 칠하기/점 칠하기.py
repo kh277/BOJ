@@ -1,8 +1,6 @@
 # 백준 1409
 
 import io
-import math
-from collections import deque
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
@@ -30,11 +28,17 @@ def solve(N, point):
     if N == 1:
         return 0
 
+    # 두 점 사이의 간격 전부 구하기
+    gap = set()
+    for i in range(N-1):
+        for j in range(i+1, N):
+            gap.add(point[j]-point[i])
+
     maxMatch = 0
     setP = set(point)
 
     # 모든 회전각 theta에 대해 최대 매칭 수 체크
-    for theta in range(1, 360):
+    for theta in gap:
         visited = set()
         curMatch = 0
         for i in range(N):
