@@ -5,31 +5,25 @@ import math
 from collections import deque
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
-dx = [-1, 1]
 
 
-def BFS(N, setP, visited, start, theta):
-    result = 0
-    q = deque()
-    q.append(start)
+# 회전각이 theta일 때, start에서 시작해서 이어질 수 있는 모든 간선의 수 체크
+def DFS(N, setP, visited, start, theta):
+    count = 1
+    stack = []
+    stack.append(start)
     visited.add(start)
 
-    while q:
-        curV = q.popleft()
+    while stack:
+        curV = stack.pop()
 
-        for i in range(2):
-            nextV = curV + theta*dx[i]
-            if nextV < 0:
-                nextV += 360
-            elif nextV >= 360:
-                nextV -= 360
-
+        for nextV in [(curV+theta)%360, (curV-theta)%360]:
             if nextV in setP and nextV not in visited:
-                q.append(nextV)
+                stack.append(nextV)
                 visited.add(nextV)
-                result += 1
+                count += 1
 
-    return result
+    return count
 
 
 def solve(N, point):
@@ -37,25 +31,24 @@ def solve(N, point):
         return 0
 
     # 두 점 사이의 간격 전부 구하기
-    result = 0
-    point.sort()
     gap = []
     for i in range(N-1):
         for j in range(i+1, N):
             gap.append(point[j]-point[i])
 
-    # 회전각이 theta일 때, 이어질 수 있는 간선의 총 개수를 구하기
+    maxMatch = 0
     setP = set(point)
+
+    # 모든 회전각 theta에 대해 최대 매칭 수 체크
     for theta in gap:
         visited = set()
-        curRes = 0
+        curMatch = 0
         for i in range(N):
-            if point[i] not in visited:
-                curRes += math.ceil(BFS(N, setP, visited, point[i], theta)/2) * 2
+            if point[i] in setP and point[i] not in visited:
+                curMatch += DFS(N, setP, visited, point[i], theta) // 2
+        maxMatch = max(maxMatch, curMatch)
 
-        result = max(result, curRes)
-
-    return result
+    return maxMatch * 2
 
 
 def main():
