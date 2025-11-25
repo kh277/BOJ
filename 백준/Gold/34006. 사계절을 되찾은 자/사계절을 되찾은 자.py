@@ -6,13 +6,14 @@
 
 import io
 from collections import deque
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def BFS(N, start, delta, visited):
-    dx = [delta[0], -delta[1], 0]
-    dy = [0, delta[1], -delta[2]]
+    dx = (delta[0], -delta[1], 0)
+    dy = (0, delta[1], -delta[2])
     maxG = 2*N
     tMaxG = 3*N
 
@@ -37,7 +38,7 @@ def BFS(N, start, delta, visited):
 
 def solve(N, start, delta):
     # BFS 탐색
-    visited = [[-1 for _ in range(2*N)] for _ in range(2*N)]
+    visited = [array('i', [-1]) * (2*N) for _ in range(2*N)]
     BFS(N, start, delta, visited)
 
     # 게이지를 안정화하지 못한 경우
