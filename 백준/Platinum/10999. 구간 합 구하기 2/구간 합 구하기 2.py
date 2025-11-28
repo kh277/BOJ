@@ -1,73 +1,95 @@
 # 백준 10999
 
-import io
+import sys
 
-input = io.BufferedReader(io.FileIO(0), 1<<18).readline
-INF = 10**10
-
-
-# [start, end] 범위의 세그먼트 트리 생성
-def build(tree, A, curV, start, end):
-    # 리프 노드인 경우
-    if start == end:
-        tree[curV] = A[start]
-        return tree[curV]
-
-    mid = (start+end)//2
-    tree[curV] = build(tree, A, curV<<1, start, mid) + build(tree, A, curV<<1 | 1, mid+1, end)
-    return tree[curV]
+input = sys.stdin.readline
 
 
-# 세그먼트 트리의 [start, end] 범위에서 [qLeft, qRight] 범위의 합 반환
-def query(tree, lazy, curV, start, end, qLeft, qRight):
-    # 현재 노드의 lazy 먼저 처리
-    prop(tree, lazy, curV, start, end)
+def build(N, A):
+    tree = [0] * (N*2)
+    for i in range(len(A)):
+        tree[N+i] = A[i]
 
-    # 겹치는 구간이 없는 경우
-    if qLeft > end or qRight < start:
-        return 0
-
-    # 전체 범위인 경우
-    if qLeft <= start and end <= qRight:
-        return tree[curV]
-
-    mid = (start+end)//2
-    return query(tree, lazy, curV<<1, start, mid, qLeft, qRight) + query(tree, lazy, curV<<1 | 1, mid+1, end, qLeft, qRight)
-
-
-def prop(tree, lazy, curV, start, end):
-    # 업데이트가 필요한 경우
-    if lazy[curV] != 0:
-        tree[curV] += (end-start+1) * lazy[curV]
-
-        # 리프 노드가 아닌 경우
-        if start != end:
-            lazy[curV<<1] += lazy[curV]
-            lazy[curV<<1 | 1] += lazy[curV]
-
-        lazy[curV] = 0
-
-
-def lazyUpdate(tree, lazy, curV, start, end, qLeft, qRight, value):
-    # lazy값이 남아있으면 전파
-    prop(tree, lazy, curV, start, end)
-
-    if qLeft > end or qRight < start:
-        return
+    for i in range(N-1, 0, -1):
+        tree[i] = tree[i<<1] + tree[i<<1 | 1]
     
-    if qLeft <= start and end <= qRight:
-        tree[curV] += (end-start+1) * value
+    return tree
 
-        # 리프 노드가 아니라면
-        if start != end:
-            lazy[curV<<1] += value
-            lazy[curV<<1 | 1] += value
-        return
 
-    mid = (start+end)//2
-    lazyUpdate(tree, lazy, curV<<1, start, mid, qLeft, qRight, value)
-    lazyUpdate(tree, lazy, curV<<1 | 1, mid+1, end, qLeft, qRight, value)
-    tree[curV] = tree[curV<<1] + tree[curV<<1 | 1]
+# index노드가 담당하는 구간 전체에 쿼리 적용
+def apply(N, tree, lazy, length, index, value):
+    tree[index] += value * length[index]
+
+    # 리프 노드가 아니라면
+    if index < N:
+        lazy[index] += value
+
+
+# A[index] 부모 노드들의 미적용 lazy 전파
+def push(N, tree, lazy, length, index):
+    for s in range(N.bit_length()-1, 0, -1):
+        nextI = index >> s
+
+        # 미적용 lazy가 있는 경우
+        if lazy[nextI]:
+            apply(N, tree, lazy, length, nextI<<1, lazy[nextI])
+            apply(N, tree, lazy, length, nextI<<1 | 1, lazy[nextI])
+            lazy[nextI] = 0
+
+
+# A[index] 부모 노드들의 tree 갱신
+def pull(N, tree, lazy, length, index):
+    while index > 1:
+        index >>= 1
+        tree[index] = tree[index<<1] + tree[index<<1 | 1] + lazy[index] * length[index]
+
+
+# 구간 [left, right]에 value값 더하기
+def lazyUpdate(N, tree, lazy, length, left, right, value):
+    left += N
+    right += N
+
+    # 업데이트 전 양쪽 끝 노드 경로의 lazy 전파
+    prefL = left
+    suffR = right
+    push(N, tree, lazy, length, prefL)
+    push(N, tree, lazy, length, suffR)
+
+    while left <= right:
+        if left & 1:
+            apply(N, tree, lazy, length, left, value)
+            left += 1
+        if ~right & 1:
+            apply(N, tree, lazy, length, right, value)
+            right -= 1
+        left >>= 1
+        right >>= 1
+    
+    # 업데이트 후 위로 올라오면서 부모 값 갱신
+    pull(N, tree, lazy, length, prefL)
+    pull(N, tree, lazy, length, suffR)
+
+
+# 구간 [left, right]의 합 구하기
+def query(N, tree, lazy, length, left, right):
+    left += N
+    right += N
+    push(N, tree, lazy, length, left)
+    push(N, tree, lazy, length, right)
+
+    result = 0
+    while left <= right:
+        if left & 1:
+            result += tree[left]
+            left += 1
+        if ~right & 1:
+            result += tree[right]
+            right -= 1
+        left >>= 1
+        right >>= 1
+
+    return result
+
 
 
 def main():
@@ -75,23 +97,28 @@ def main():
     A = []
     for _ in range(N):
         A.append(int(input()))
-    size = 4*N
-    tree = [0] * size
-    lazy = [0] * size
+
+    size = 1<<N.bit_length()
+    lazy = [0] * (size*2)
+
+    # length : 각 노드가 담당하는 구간의 길이
+    length = [1] * (size*2)
+    for i in range(size-1, 0, -1):
+        length[i] = length[i<<1] + length[i<<1 | 1]
 
     # 세그먼트 트리 빌드
-    build(tree, A, 1, 0, N-1)
+    tree = build(size, A)
 
     # 쿼리 처리
     for _ in range(M+K):
         q = list(map(int, input().split()))
         # 1 : 구간 업데이트 쿼리
         if q[0] == 1:
-            lazyUpdate(tree, lazy, 1, 0, N-1, q[1]-1, q[2]-1, q[3])
+            lazyUpdate(size, tree, lazy, length, q[1]-1, q[2]-1, q[3])
 
         # 2: 구간 합 쿼리
         else:
-            print(query(tree, lazy, 1, 0, N-1, q[1]-1, q[2]-1))
+            print(query(size, tree, lazy, length, q[1]-1, q[2]-1))
 
 
 main()
