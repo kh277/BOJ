@@ -56,8 +56,8 @@ def main():
     for i in range(N+1):
         if len(edge[i]) != 0:
             for curE in edge[i]:
-                update(N, tree, curE, 1)
-                cross += query(N, tree, curE+1, N+1)
+                update(size, tree, curE, 1)
+                cross += query(size, tree, curE+1, N+1)
 
     print(cross)
     return
