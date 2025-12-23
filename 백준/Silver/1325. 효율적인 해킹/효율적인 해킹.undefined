@@ -1,0 +1,73 @@
+// 백준 1325
+
+#pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<vector<int>> graph;
+int visited[10001];
+int q[10001];
+
+
+int BFS(int V, int curV) {
+    memset(visited, 0, sizeof(visited));
+    int front = 0;
+    int rear = 0;
+    int count = 1;
+    visited[curV] = 1;
+    q[rear++] = curV;
+
+    while (front < rear) {
+        curV = q[front++];
+        for (int nextV : graph[curV]) {
+            if (!visited[nextV]) {
+                count++;
+                visited[nextV] = 1;
+                q[rear++] = nextV;
+            }
+        }
+    }
+
+    return count;
+}
+
+
+int main() {
+    cin.tie(0);
+	ios_base::sync_with_stdio(0);
+
+    int V, E;
+    cin >> V >> E;
+    graph.resize(V+1, vector<int>());
+
+    int a, b;
+    for (int i=0; i<E; i++) {
+        cin >> a >> b;
+        graph[b].push_back(a);
+    }
+
+    // BFS로 해킹 가능한 컴퓨터 수에 따라 result에 저장
+    vector<int> result;
+    int maxV = 0;
+    for (int i=1; i<=V; i++) {
+        int curC = BFS(V, i);
+        if (curC > maxV) {
+            result.clear();
+            result.push_back(i);
+            maxV = curC;
+        }
+        else if (curC == maxV)
+            result.push_back(i);
+    }
+
+    sort(result.begin(), result.end());
+    for (int i=0; i<result.size(); i++) {
+        if (i) cout << ' ';
+        cout << result[i];
+    }
+    cout << '\n';
+}
