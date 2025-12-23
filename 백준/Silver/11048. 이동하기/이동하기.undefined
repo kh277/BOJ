@@ -1,0 +1,50 @@
+// 백준 11048
+
+#pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<vector<int>> grid;
+vector<vector<int>> DP;
+
+
+int solve(int Y, int X) {
+    for (int y=0; y<Y; y++) {
+        for (int x=0; x<X; x++) {
+            int prev = 0;
+            if (x > 0 && y > 0)
+                prev = max(prev, DP[y-1][x-1]);
+            if (x > 0)
+                prev = max(prev, DP[y][x-1]);
+            if (y > 0)
+                prev = max(prev, DP[y-1][x]);
+            
+            DP[y][x] = prev + grid[y][x];
+        }
+    }
+
+    return DP[Y-1][X-1];
+}
+
+
+int main() {
+    cin.tie(0);
+	ios_base::sync_with_stdio(0);
+
+    int X, Y;
+    cin >> Y >> X;
+
+    grid.resize(Y, vector<int>(X));
+    DP.resize(Y, vector<int>(X));
+
+    for (int y=0; y<Y; y++) {
+        for (int x=0; x<X; x++)
+            cin >> grid[y][x];
+    }
+
+    cout << solve(Y, X) << "\n";
+}
