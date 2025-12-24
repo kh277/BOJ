@@ -1,0 +1,84 @@
+// 백준 6818
+
+#pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Circle {
+    int x, y, r, bitrate;
+};
+
+vector<Circle> circles;
+
+
+// 원 C가 x=a와의 정수 교점 범위 반환
+pair<int, int> cross(Circle c, int a) {
+    double dist = sqrt(c.r*c.r-(c.x-a)*(c.x-a));
+    return {(int)ceil(c.y-dist), (int)(c.y+dist)};
+}
+
+
+pair<int, int> solve(int X, int Y, int K) {
+    int maxBitrate = 0;
+    int maxCount = 0;
+
+    for (int x=1; x<=X; x++) {
+        int diff[Y+1] = {};
+
+        // 모든 원에 대해 포함 범위 계산
+        for (Circle c : circles) {
+            if (x < c.x-c.r || x > c.x+c.r) continue;
+
+            // 원의 포함 범위를 차분 배열에 저장
+            auto [startY, endY] = cross(c, x);
+            startY = max(1, startY);
+            endY = min(Y, endY);
+            diff[startY] += c.bitrate;
+            if (endY < Y) {
+                diff[endY+1] -= c.bitrate;
+            }
+        }
+
+        // 차분 배열에서 최대값 추출
+        int accSum = 0;
+        int totalCount = 0;
+        int diffMax = 0;
+        for (int i=1; i<=Y; i++) {
+            accSum += diff[i];
+            if (diffMax < accSum) {
+                totalCount = 1;
+                diffMax = accSum;
+            }
+            else if (diffMax == accSum)
+                totalCount += 1;
+        }
+
+        // 이전 x좌표에서의 최대값과 비교 및 갱신
+        if (maxBitrate < diffMax) {
+            maxCount = totalCount;
+            maxBitrate = diffMax;
+        }
+        else if (maxBitrate == diffMax)
+            maxCount += totalCount;
+    }
+
+    return {maxBitrate, maxCount};
+}
+
+
+int main() {
+    cin.tie(0);
+	ios_base::sync_with_stdio(0);
+
+    int X, Y, K;
+    cin >> Y >> X >> K;
+    circles.resize(K);
+
+    for (int i=0; i<K; i++)
+        cin >> circles[i].x >> circles[i].y >> circles[i].r >> circles[i].bitrate;
+
+    pair<int, int> result = solve(X, Y, K);
+    cout << result.first << '\n' << result.second << '\n';
+}
