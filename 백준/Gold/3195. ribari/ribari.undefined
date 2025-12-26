@@ -1,18 +1,14 @@
 // 백준 3195
 
+#pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroint-loops")
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
 #define pii pair<int, int>
 
 vector<pii> town;
-
-
-bool cmp(const pii& v1, const pii& v2) {
-    if (v1.first == v2.first)
-        return v1.second < v2.second;
-    return v1.first < v2.first;
-} 
 
 
 bool check(int N, int v) {
@@ -34,9 +30,6 @@ bool check(int N, int v) {
 
 
 int solve(int N) {
-    // 오름차순 정렬
-    sort(town.begin(), town.end());
-
     // 매개변수 탐색 진행
     int yes = 0;
     int no = 1000000000;
@@ -53,6 +46,9 @@ int solve(int N) {
 
 
 int main() {
+    cin.tie(0);
+	ios_base::sync_with_stdio(0);
+
     int N;
     cin >> N;
 
