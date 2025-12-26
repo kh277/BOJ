@@ -8,7 +8,7 @@ using namespace std;
 #define ll long long
 #define pii pair<int, int>
 
-vector<pii> town;
+pii town[100001];
 
 
 bool check(int N, int v) {
@@ -21,6 +21,7 @@ bool check(int N, int v) {
             accSum = max(0LL, accSum - dist);
         else
             accSum -= dist;
+
         // 현재 마을의 사람 수만큼 차감
         accSum += town[i].second - v;
     }
@@ -55,7 +56,7 @@ int main() {
     for (int i=0; i<N; i++) {
         int a, b;
         cin >> a >> b;
-        town.push_back({a, b});
+        town[i] = {a, b};
     }
 
     cout << solve(N) << "\n";
