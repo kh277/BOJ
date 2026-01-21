@@ -11,7 +11,7 @@ def solve(N, box):
     left = 0
     right = N//2
     count = 0
-    used = bytearray(N)
+    used = [0] * N
 
     # 겹칠 수 있는 박스 세기
     while right < N:
