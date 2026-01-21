@@ -30,12 +30,8 @@ def solve(N, box):
         else:
             right += 1
 
-    # 겹치지지 않은 박스 세기
-    for i in range(N):
-        if used[i] == 0:
-            count += 1
-
-    return count
+    # 겹치지지 않은 박스 더해주기
+    return count + N - sum(used)
 
 
 def main():
