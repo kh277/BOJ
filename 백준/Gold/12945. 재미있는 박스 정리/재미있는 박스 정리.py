@@ -1,12 +1,13 @@
 # 백준 2418
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 def solve(N, box):
-    box.sort()
+    box = sorted(box)
     left = 0
     right = N//2
     count = 0
@@ -39,7 +40,7 @@ def solve(N, box):
 
 def main():
     N = int(input())
-    box = []
+    box = array('I')
     for _ in range(N):
         box.append(int(input()))
     print(solve(N, box))
