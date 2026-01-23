@@ -43,7 +43,6 @@ def solve(N, graph):
 def main():
     N = int(input())
     graph = []
-    graph.sort(key= lambda x: -len(x))
     for _ in range(N):
         graph.append(list(map(int, input().split())))
 
