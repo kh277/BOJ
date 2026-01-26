@@ -17,56 +17,83 @@ class Line:
         return self.a*x + self.b
 
 
-# node가 관리하는 구간 [s, e]에 직선 v를 추가하기
-def update(tree, node, v):
-    s = tree[node][2]
-    e = tree[node][3]
-    m = (s + e) >> 1
+# index번 노드가 관리하는 구간 [s, e]에 직선 v를 추가하기
+def update(tree, index, v):
+    newLine = v
+    curI = index
 
-    low = tree[node][4]
-    high = v
+    while True:
+        start = tree[curI][2]
+        end = tree[curI][3]
+        mid = (start + end) >> 1
 
-    # 시작점에서 high가 위에 오도록 수정
-    if low.get(s) > high.get(s):
-        low, high = high, low
+        low = tree[curI][4]
+        high = newLine
 
-    # high가 시작점, 끝점 모두 위에 있는 경우
-    if low.get(e) <= high.get(e):
-        tree[node][4] = high
-        return
+        # start에서 high가 위에 오도록 교환
+        if low.get(start) > high.get(start):
+            low, high = high, low
 
-    # 오른쪽 노드에서 low, high가 교차하는 경우
-    if low.get(m) < high.get(m):
-        tree[node][4] = high
-        if tree[node][1] == -1:
-            tree[node][1] = len(tree)
-            tree.append([-1, -1, m+1, e, Line(0, -INF)])
-        update(tree, tree[node][1], low)
-    # 왼쪽 노드에서 low, high가 교차하는 경우
-    else:
-        tree[node][4] = low
-        if tree[node][0] == -1:
-            tree[node][0] = len(tree)
-            tree.append([-1, -1, s, m, Line(0, -INF)])
-        update(tree, tree[node][0], high)
+        # high가 start, end 모두 위에 있는 경우
+        if low.get(end) <= high.get(end):
+            tree[curI][4] = high
+            return
+
+        # 리프 노드에 도달한 경우
+        if start == end:
+            return
+
+        # 오른쪽 부분에서 low와 high가 교차하는 경우
+        if low.get(mid) < high.get(mid):
+            tree[curI][4] = high
+            newLine = low
+            nextI = tree[curI][1]
+            if nextI == -1:
+                nextI = len(tree)
+                tree[curI][1] = nextI
+                tree.append([-1, -1, mid+1, end, Line(0, -INF)])
+                tree[nextI][4] = newLine
+                return
+            curI = nextI
+        # 왼쪽 부분에서 low와 high가 교차하는 경우
+        else:
+            tree[curI][4] = low
+            newLine = high
+            nextI = tree[curI][0]
+            if nextI == -1:
+                nextI = len(tree)
+                tree[curI][0] = nextI
+                tree.append([-1, -1, start, mid, Line(0, -INF)])
+                tree[nextI][4] = newLine
+                return
+            curI = nextI
 
 
-# node가 관리하는 구간에서 함수값 x 구하기
-def query(tree, node, x):
-    # node가 아직 생성되지 않은 경우
-    if node == -1:
-        return -INF
+# index번 노드가 관리하는 구간에서 함수값 x 구하기
+def query(tree, index, x):
+    curI = index
+    result = -INF
 
-    s = tree[node][2]
-    e = tree[node][3]
-    m = (s + e) >> 1
+    while curI != -1:
+        start = tree[curI][2]
+        end = tree[curI][3]
+        mid = (start + end) >> 1
+        value = tree[curI][4].get(x)
+        if value > result:
+            result = value
 
-    # 자식 노드로 전이
-    cur = tree[node][4].get(x)
-    if x <= m:
-        return max(cur, query(tree, tree[node][0], x))
-    else:
-        return max(cur, query(tree, tree[node][1], x))
+        # 리프 노드에 도착한 경우
+        if start == end:
+            break
+
+        # 왼쪽 부분으로 이동
+        if x <= mid:
+            curI = tree[curI][0]
+        # 오른쪽 부분으로 이동
+        else:
+            curI = tree[curI][1]
+
+    return result
 
 
 def main():
