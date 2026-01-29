@@ -10,7 +10,7 @@ def DFS(N, K, graph, curV, colorList):
         return 1
 
     result = 0
-    for curColor in range(K):
+    for curColor in range(min(K, curV+1)):
         # curV를 curColor로 칠할 수 있는지 체크
         canPaint = True
         for nextV in graph[curV]:
