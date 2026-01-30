@@ -1,9 +1,5 @@
 # 백준 7804
 
-'''
-DP[i][j] = i번 정점까지 j의 비용으로 이동할 수 있을 때, 걸리는 시간 저장
-'''
-
 import io
 import heapq
 
@@ -12,9 +8,8 @@ INF = 10**9
 
 
 def solve(V, graph, startV, endV, r):
-    DP = [[INF] * (r+1) for _ in range(V)]
-    DP[startV][0] = 0
-
+    DP = [INF for _ in range(V)]
+    DP[startV] = 0
     pq = [(0, 0, startV)]
 
     while pq:
@@ -27,8 +22,8 @@ def solve(V, graph, startV, endV, r):
             nextT = curT + time
             nextC = curC + cost
 
-            if nextC <= r and DP[nextV][nextC] > nextT:
-                DP[nextV][nextC] = nextT
+            if nextC <= r and DP[nextV] > nextT:
+                DP[nextV] = nextT
                 heapq.heappush(pq, (nextT, nextC, nextV))
 
 
