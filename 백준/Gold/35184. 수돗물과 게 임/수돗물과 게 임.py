@@ -42,7 +42,7 @@ def pqBFS(Y, X, T, grid, start):
                     noSearch = True
                     break
             if noSearch == False:
-                pq.append((curT, curY, curX, curW))
+                heapq.heappush(pq, (curT, curY, curX, curW))
                 visited[curY][curX][curW] = curT
         # 일반 칸일 경우
         else:
