@@ -1,0 +1,92 @@
+// 백준 8068
+
+#pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#include <bits/stdc++.h>
+using namespace std;
+
+int grid[100][100];
+int dx[4] = {-1, 1, 0, 0};
+int dy[4] = {0, 0, -1, 1};
+int visited[100][100];
+
+
+struct Pos
+{
+    int h;
+    int y;
+    int x;
+};
+
+
+struct cmp {
+    bool operator()(const Pos& a, const Pos& b) const
+    {
+        return a.h > b.h;
+    }
+};
+
+
+inline int max(int a, int b) {return a>b ? a:b;}
+
+
+int solve(int Y, int X)
+{   
+    // 가장자리 블럭부터 pq에 삽입
+    priority_queue<Pos, vector<Pos>, cmp> pq;
+    for (int y=0; y<Y; y++)
+    {
+        pq.push({grid[y][0], y, 0});
+        pq.push({grid[y][X-1], y, X-1});
+        visited[y][0] = 1;
+        visited[y][X-1] = 1;
+    }
+    for (int x=1; x<X-1; x++)
+    {
+        pq.push({grid[0][x], 0, x});
+        pq.push({grid[Y-1][x], Y-1, x});
+        visited[0][x] = 1;
+        visited[Y-1][x] = 1;
+    }
+
+    int totalWater = 0;
+    while (!pq.empty())
+    {
+        Pos cur = pq.top();
+        pq.pop();
+
+        for (int i=0; i<4; i++)
+        {
+            int nextX = cur.x + dx[i];
+            int nextY = cur.y + dy[i];
+            if (0 <= nextX && nextX < X && 0 <= nextY && nextY < Y && visited[nextY][nextX] == 0)
+            {
+                int nextH = grid[nextY][nextX];
+                totalWater += max(0, cur.h-nextH);
+                pq.push({max(cur.h, nextH), nextY, nextX});
+                visited[nextY][nextX] = 1;
+            }
+        }
+    }
+
+    return totalWater;
+}
+
+
+int main()
+{
+    cin.tie(0);
+	ios_base::sync_with_stdio(0);
+
+    int Y, X;
+    cin >> Y >> X;
+
+    for (int y=0; y<Y; y++)
+    {
+        for (int x=0; x<X; x++)
+            cin >> grid[y][x];
+    }
+
+    cout << solve(Y, X) << "\n";
+}
