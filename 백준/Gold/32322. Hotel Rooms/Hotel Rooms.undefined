@@ -1,0 +1,64 @@
+// 백준 32322
+
+#pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#include <bits/stdc++.h>
+using namespace std;
+
+const int LIMIT = 500000;
+int tree[2*LIMIT];
+
+
+// index번째 값을 value로 변경
+void update(int N, int index, int value)
+{
+    for (tree[index += N] = value; index > 1; index >>= 1)
+        tree[index>>1] = tree[index] + tree[index ^ 1];
+}
+
+
+// [left, right] 구간의 총합 구하기
+int query(int N, int left, int right)
+{
+    int result = 0;
+    for (left += N, right += N; left <= right; left >>= 1, right >>= 1)
+    {
+        if (left & 1)
+            result += tree[left++];
+        if (~right & 1)
+            result += tree[right--];
+    }
+    return result;
+}
+
+
+int main()
+{
+    cin.tie(0);
+	ios_base::sync_with_stdio(0);
+
+    int N, T;
+    cin >> N >> T;
+
+    for (int i=0; i<T; i++)
+    {
+        char q;
+        cin >> q;
+
+        // 방 예약
+        if (q == 'R')
+        {
+            int i;
+            cin >> i;
+            update(N, i-1, 1);
+        }
+        // 빈 방 조회
+        else
+        {
+            int left, right;
+            cin >> left >> right;
+            cout << right - left + 1 - query(N, left-1, right-1) << "\n";
+        }
+    }
+}
