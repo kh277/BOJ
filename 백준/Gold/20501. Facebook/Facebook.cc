@@ -29,7 +29,7 @@ int main()
     // AND 쿼리 처리
     int Q;
     cin >> Q;
-    for (int i = 0; i < Q; i++)
+    while (Q--)
     {
         int a, b;
         cin >> a >> b;
