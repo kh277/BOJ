@@ -1,5 +1,9 @@
 # 백준 14442
 
+'''
+visited[y][x] = [y, x]에 도착하기 위해 사용한 파괴 횟수
+'''
+
 import io
 from collections import deque
 
@@ -10,31 +14,32 @@ INF = 1000000000
 
 
 def BFS(Y, X, K, grid):
-    visited = [[[INF] * (K+1) for _ in range(X)] for _ in range(Y)]
+    visited = [[-1] * X for _ in range(Y)]
     q = deque()
-    q.append([0, 0, K])
-    visited[0][0][K] = 1
+    q.append((0, 0, K, 1))
+    visited[0][0] = K
 
     while q:
-        curY, curX, leftBreak = q.popleft()
+        curY, curX, leftBreak, dist = q.popleft()
 
+        # 도착점에 도달한 경우
         if curX == X-1 and curY == Y-1:
-            return visited[curY][curX][leftBreak]
+            return dist
 
         for i in range(4):
             nextX = curX + dx[i]
             nextY = curY + dy[i]
-            nextM = visited[curY][curX][leftBreak]+1
-            if 0 <= nextX < X and 0 <= nextY < Y:
-                # 다음 칸이 벽이고 돌파 가능하다면
-                if grid[nextY][nextX] == 1 and leftBreak > 0 and visited[nextY][nextX][leftBreak-1] > nextM:
-                    q.append((nextY, nextX, leftBreak-1))
-                    visited[nextY][nextX][leftBreak-1] = nextM
 
-                # 다음 칸이 일반 칸이라면
-                elif grid[nextY][nextX] == 0 and visited[nextY][nextX][leftBreak] > nextM:
-                    q.append((nextY, nextX, leftBreak))
-                    visited[nextY][nextX][leftBreak] = nextM
+            if 0 <= nextX < X and 0 <= nextY < Y:
+                # 다음 칸이 벽이고 더 많은 파괴 횟수를 남겼다면
+                if grid[nextY][nextX] == '1' and leftBreak > 0 and visited[nextY][nextX] < leftBreak - 1:
+                    q.append((nextY, nextX, leftBreak-1, dist+1))
+                    visited[nextY][nextX] = leftBreak-1
+
+                # 다음 칸이 일반 칸이고, 더 많은 파괴 횟수를 남겼다면
+                elif grid[nextY][nextX] == '0' and visited[nextY][nextX] < leftBreak:
+                    q.append((nextY, nextX, leftBreak, dist+1))
+                    visited[nextY][nextX] = leftBreak
 
     return -1
 
@@ -43,7 +48,7 @@ def main():
     Y, X, K = map(int, input().split())
     grid = []
     for _ in range(Y):
-        grid.append(list(map(int, input().decode().strip())))
+        grid.append(list(input().decode().strip()))
 
     print(BFS(Y, X, K, grid))
 
