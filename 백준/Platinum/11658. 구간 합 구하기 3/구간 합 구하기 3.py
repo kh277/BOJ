@@ -1,7 +1,6 @@
 # 백준 11658
 
 import io
-from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
@@ -37,7 +36,7 @@ def main():
         grid.append(list(map(int, input().split())))
 
     # 누적 합 배열 전처리
-    accSum = [array('i', [0]) * N for _ in range(N)]
+    accSum = [[0] * N for _ in range(N)]
     init(N, grid, accSum)
 
     # 쿼리 처리
