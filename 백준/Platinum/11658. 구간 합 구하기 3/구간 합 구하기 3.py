@@ -1,13 +1,14 @@
 # 백준 11658
 
 import io
+from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 # Y*X 크기의 arr을 기반으로 2D Fenwick Tree 생성
 def build(Y, X, arr):
-    tree = [[0] * (X+1) for _ in range(Y+1)]
+    tree = [array('i', [0]) * (X+1) for _ in range(Y+1)]
 
     for y in range(1, Y+1):
         for x in range(1, X+1):
