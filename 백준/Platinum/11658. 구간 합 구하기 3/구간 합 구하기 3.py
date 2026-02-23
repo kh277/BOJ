@@ -5,28 +5,58 @@ import io
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
-def init(N, grid, accSum):
-    for y in range(N):
-        accSum[y][0] = grid[y][0]
-        for x in range(1, N):
-            accSum[y][x] = accSum[y][x-1] + grid[y][x]
+# Y*X 크기의 arr을 기반으로 2D Fenwick Tree 생성
+def build(Y, X, arr):
+    tree = [[0] * (X+1) for _ in range(Y+1)]
+
+    for y in range(1, Y+1):
+        for x in range(1, X+1):
+            tree[y][x] = arr[y-1][x-1]
+    for y in range(1, Y+1):
+        for x in range(1, X+1):
+            nextX = x + (x & -x)
+            if nextX <= X:
+                tree[y][nextX] += tree[y][x]
+    for y in range(1, Y+1):
+        nextY = y + (y & -y)
+        if nextY <= Y:
+            for x in range(1, X+1):
+                tree[nextY][x] += tree[y][x]
+
+    return tree
 
 
-def update(N, grid, accSum, x1, y1, value):
-    gap = value - grid[y1][x1]
-    grid[y1][x1] += gap
-    for x in range(x1, N):
-        accSum[y1][x] += gap
+# Y*X 크기의 tree에서 [tY][tX] 위치의 값에 diff 더하기
+def update(Y, X, tree, tY, tX, diff):
+    y = tY
+    while y <= Y:
+        x = tX
+        while x <= X:
+            tree[y][x] += diff
+            x += (x & -x)
+        y += (y & -y)
 
 
-def query(N, accSum, x1, y1, x2, y2):
+# y범위 [0, tY], x범위 [0, tX]에 대해 구간 합 쿼리
+def basicQuery(tree, tY, tX):
     result = 0
-    for y in range(y1, y2+1):
-        result += accSum[y][x2]
-        if x1 != 0:
-            result -= accSum[y][x1-1]
+    y = tY
+    while y > 0:
+        x = tX
+        while x > 0:
+            result += tree[y][x]
+            x -= (x & -x)
+        y -= (y & -y)
 
     return result
+
+
+# y범위 [sY, eY], x범위 [sX, eX]에 대해 구간 합 쿼리
+def query(tree, sY, sX, eY, eX):
+    return (basicQuery(tree, eY, eX)
+        - basicQuery(tree, eY, sX-1)
+        - basicQuery(tree, sY-1, eX)
+        + basicQuery(tree, sY-1, sX-1))
 
 
 def main():
@@ -35,17 +65,19 @@ def main():
     for _ in range(N):
         grid.append(list(map(int, input().split())))
 
-    # 누적 합 배열 전처리
-    accSum = [[0] * N for _ in range(N)]
-    init(N, grid, accSum)
+    # 펜윅 트리 생성
+    tree = build(N, N, grid)
 
     # 쿼리 처리
     for _ in range(M):
         w, *q = map(int, input().split())
         if w == 0:
-            update(N, grid, accSum, q[1]-1, q[0]-1, q[2])
+            y, x, v = q[0], q[1], q[2]
+            update(N, N, tree, y, x, v-grid[y-1][x-1])
+            grid[y-1][x-1] = v
         else:
-            print(query(N, accSum, q[1]-1, q[0]-1, q[3]-1, q[2]-1))
+            sY, sX, eY, eX = q[0], q[1], q[2], q[3]
+            print(query(tree, sY, sX, eY, eX))
 
 
 main()
