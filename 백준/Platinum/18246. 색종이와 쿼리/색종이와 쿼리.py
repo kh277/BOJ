@@ -91,7 +91,7 @@ def main():
             diff[y][x] += diff[y-1][x]
 
     # 2차원 세그먼트 트리 생성
-    size = 1<<(MAX-1).bit_length()
+    size = MAX
     tree = build(size, size, diff)
 
     # 쿼리 처리
