@@ -1,14 +1,13 @@
 # 백준 1168
 
 import io
-from array import array
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
 # 크기가 N인 세그먼트 트리 빌드
 def build(N, size):
-    tree = array('i', [0]) * (size*2)
+    tree = [0] * (size*2)
     for i in range(N):
         tree[size+i] = 1
     for i in range(size-1, 0, -1):
@@ -67,7 +66,7 @@ def main():
     size = 1<<(N-1).bit_length()
     tree = build(N, size)
     curI = 0
-    result = []
+    out = ["<"]
 
     for _ in range(N):
         # 구간 [0, curPos-1]에 존재하는 수의 개수 처리
@@ -78,17 +77,14 @@ def main():
         # curI부터 K번 뒤의 수의 인덱스 반환
         target = (prev + K - 1) % tree[1] + 1
         index = getKth(size, tree, target)
-        result.append(index+1)
+        out.append(str(index+1))
+        out.append(", ")
 
         # 해당 인덱스의 숫자 제거
         update(size, tree, index, 0)
         curI = index
 
     # 결과 포매팅
-    out = ["<"]
-    for i in range(N):
-        out.append(str(result[i]))
-        out.append(", ")
     out.pop()
     out.append(">")
     print("".join(out))
