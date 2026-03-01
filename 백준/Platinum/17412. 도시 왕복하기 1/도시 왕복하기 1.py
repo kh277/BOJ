@@ -1,82 +1,106 @@
 # 백준 17412
 
-'''
-1번 도시에서 2번 도시로 가는 경로의 개수를 구해야 한다.
-따라서 1번 정점 -> 2번 정점으로 가는 최대 유량 문제로 볼 수 있다.
-이 때, 모든 간선의 유량은 1로 보면 된다.
-'''
-
-import sys
+import io
 from collections import deque
-INF = 10e5
+INF = 10000000
 
-input = sys.stdin.readline
+input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 
 
-def BFS(capacity, source, sink, parent):
-    visited = [False for _ in range(len(capacity))]
-    
-    q = deque([source])
-    visited[source] = True
-    
+# BFS를 이용해 level 그래프 생성
+def build(V, graph, source, sink, level):
+    for i in range(V):
+        level[i] = -1
+    level[source] = 0
+    q = deque()
+    q.append(source)
+
+    # source에서 각 정점까지 최단 거리를 level에 저장
     while q:
         curV = q.popleft()
-        
-        for nextV in range(len(capacity)):
-            # 용량이 남은 간선이 있는 경우
-            if visited[nextV] == False and capacity[curV][nextV] > 0:
+        for nextV, cap, _ in graph[curV]:
+            if cap > 0 and level[nextV] == -1:
+                level[nextV] = level[curV] + 1
                 q.append(nextV)
-                visited[nextV] = True
-                parent[nextV] = curV
-                
-                # sink에 도착할 경우
-                if nextV == sink:
-                    return True
-    
-    return False
+
+    return level[sink] != -1
 
 
-def NetworkFlow(capacity, source, sink):
-    parent = [-1 for _ in range(len(capacity))]
-    max_flow = 0
-    
-    # BFS로 증가 경로 탐색
-    while BFS(capacity, source, sink, parent):
-        # 증가 경로의 최소 용량 탐색
-        path_flow = INF
-        s = sink
-        while s != source:
-            path_flow = min(path_flow, capacity[parent[s]][s])
-            s = parent[s]
+# DFS를 이용해 차단 유량 계산
+def findFlow(V, graph, level, pointer, source, sink):
+    total = 0
+    while True:
+        stack = [(source, INF)]
+        path = []
+        foundFlow = 0
 
-        # 경로에 따라 용량 업데이트
-        v = sink
-        while v != source:
-            u = parent[v]
-            capacity[u][v] -= path_flow
-            capacity[v][u] += path_flow
-            v = parent[v]
+        # DFS 탐색
+        while stack:
+            curV, curFlow = stack[-1]
+            # sink에 도달한 경우 종료
+            if curV == sink:
+                foundFlow = curFlow
+                break
+
+            isPushed = False
+            for i in range(pointer[curV], len(graph[curV])):
+                nextV, cap, revV = graph[curV][i]
+
+                # 레벨+1 정점으로만 이동
+                if cap > 0 and level[curV] < level[nextV]:
+                    stack.append((nextV, min(curFlow, cap)))
+                    path.append((curV, i))
+                    pointer[curV] = i
+                    isPushed = True
+                    break
+                pointer[curV] += 1
+
+            # 더 이동할 수 없는 경우
+            if isPushed == False:
+                stack.pop()
+                if path:
+                    path.pop()
+                level[curV] = -1
+
+        if foundFlow == 0:
+            break
         
-        max_flow += path_flow
+        # 잔여 용량 갱신
+        for curV, index in path:
+            nextV, cap, revV = graph[curV][index]
+            graph[curV][index][1] -= foundFlow
+            graph[nextV][revV][1] += foundFlow
 
-    return max_flow
+        total += foundFlow
 
-
-def solve():
-    capacity = [[0 for _ in range(N+1)] for _ in range(N+1)]
-    
-    for start, end in road:
-        capacity[start][end] = 1
-    
-    return NetworkFlow(capacity, 1, 2)
+    return total
 
 
-# main 함수 ----------
-N, P = map(int, input().split())
+def Dinic(V, graph, source, sink):
+    maxFlow = 0
+    level = [-1] * V
 
-road = []
-for _ in range(P):
-    road.append(map(int, input().split()))
-    
+    # level 그래프를 구성할 수 없을 때까지 반복
+    while build(V, graph, source, sink, level):
+        pointer = [0] * V
+        maxFlow += findFlow(V, graph, level, pointer, source, sink)
 
-print(solve())
+    return maxFlow
+
+
+def main():
+    V, E = map(int, input().split())
+
+    # 그래프 작성 (graph[startV] = [[endV, capacity, reverseI], ...])
+    graph = [[] for _ in range(V+1)]
+    for _ in range(E):
+        s, e = map(int, input().split())
+        s -= 1
+        e -= 1
+        graph[s].append([e, 1, len(graph[e])])
+        graph[e].append([s, 0, len(graph[s])-1])
+
+    print(Dinic(V, graph, 0, 1))
+
+
+main()
