@@ -1,7 +1,7 @@
 # 백준 26557
 
 import io
-import heapq
+from collections import deque
 
 input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 INF = 1000000000
@@ -12,11 +12,12 @@ dx = [0, 0, 0, 0, -1, 1]
 
 def solve(Z, Y, X, grid, start, end):
     visited = [[[INF] * X for _ in range(Y)] for _ in range(Z)]
-    pq = [(0, start[0], start[1], start[2])]
+    dq = deque()
+    dq.append((0, start[0], start[1], start[2]))
     visited[start[0]][start[1]][start[2]] = 0
 
-    while pq:
-        breakCount, curZ, curY, curX = heapq.heappop(pq)
+    while dq:
+        breakCount, curZ, curY, curX = dq.popleft()
         
         if curZ == end[0] and curY == end[1] and curX == end[2]:
             return breakCount
@@ -28,10 +29,10 @@ def solve(Z, Y, X, grid, start, end):
 
             if 0 <= nextX < X and 0 <= nextY < Y and 0 <= nextZ < Z and visited[nextZ][nextY][nextX] > breakCount:
                 if grid[nextZ][nextY][nextX] == '#':
-                    heapq.heappush(pq, (breakCount+1, nextZ, nextY, nextX))
+                    dq.append((breakCount+1, nextZ, nextY, nextX))
                     visited[nextZ][nextY][nextX] = breakCount+1
                 else:
-                    heapq.heappush(pq, (breakCount, nextZ, nextY, nextX))
+                    dq.appendleft((breakCount, nextZ, nextY, nextX))
                     visited[nextZ][nextY][nextX] = breakCount
 
 
