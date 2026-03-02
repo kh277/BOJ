@@ -27,11 +27,11 @@ def solve(Z, Y, X, grid, start, end):
             nextY = curY + dy[i]
             nextZ = curZ + dz[i]
 
-            if 0 <= nextX < X and 0 <= nextY < Y and 0 <= nextZ < Z and visited[nextZ][nextY][nextX] > breakCount:
-                if grid[nextZ][nextY][nextX] == '#':
+            if 0 <= nextX < X and 0 <= nextY < Y and 0 <= nextZ < Z:
+                if grid[nextZ][nextY][nextX] == '#' and visited[nextZ][nextY][nextX] > breakCount+1:
                     dq.append((breakCount+1, nextZ, nextY, nextX))
                     visited[nextZ][nextY][nextX] = breakCount+1
-                else:
+                elif grid[nextZ][nextY][nextX] != '#' and visited[nextZ][nextY][nextX] > breakCount:
                     dq.appendleft((breakCount, nextZ, nextY, nextX))
                     visited[nextZ][nextY][nextX] = breakCount
 
