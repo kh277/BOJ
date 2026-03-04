@@ -11,16 +11,16 @@ def solve(grid, curX):
     initStatus = ''.join(grid)
     end = "123456789"
     q = deque()
-    visited = set()
-    q.append((initStatus, curX, 0, ""))
-    visited.add(initStatus)
+    visited = dict()
+    q.append((initStatus, curX, 0))
+    visited[initStatus] = ""
 
     while q:
-        status, curX, count, move = q.popleft()
+        status, curX, count = q.popleft()
 
         # 종료조건
         if status == end:
-            return count, move
+            return count, visited[status]
 
         # 위치 이동
         for nextX in delta[curX]:
@@ -29,8 +29,8 @@ def solve(grid, curX):
             nextS = ''.join(temp)
 
             if nextS not in visited:
-                q.append((nextS, nextX, count+1, move+nextS[curX]))
-                visited.add(nextS)
+                q.append((nextS, nextX, count+1))
+                visited[nextS] = visited[status] + nextS[curX]
 
 
 def main():
