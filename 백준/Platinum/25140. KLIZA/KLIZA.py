@@ -9,7 +9,7 @@ delta = [(1, 3), (0, 2, 4), (1, 5), (0, 4, 6), (1, 3, 5, 7), (2, 4, 8), (3, 7), 
 
 def solve(grid, curX):
     initStatus = ''.join(grid)
-    end = '012345678'
+    end = "123456789"
     q = deque()
     visited = set()
     q.append((initStatus, curX, 0, ""))
@@ -29,7 +29,7 @@ def solve(grid, curX):
             nextS = ''.join(temp)
 
             if nextS not in visited:
-                q.append((nextS, nextX, count+1, move + str(int(nextS[curX])+1)))
+                q.append((nextS, nextX, count+1, move+nextS[curX]))
                 visited.add(nextS)
 
 
@@ -39,11 +39,9 @@ def main():
         grid.extend(list(input().decode().split()))
     curX = 0
     for i in range(9):
-            if grid[i] == 'X':
-                grid[i] = '8'
-                curX = i
-            else:
-                grid[i] = str(int(grid[i])-1)
+        if grid[i] == 'X':
+            grid[i] = '9'
+            curX = i
 
     c, s = solve(grid, curX)
     print(c)
