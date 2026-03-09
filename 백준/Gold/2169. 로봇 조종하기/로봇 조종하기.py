@@ -8,13 +8,13 @@ input = io.BufferedReader(io.FileIO(0), 1<<18).readline
 def solve(Y, X, grid):
     DP = [[0] * X for _ in range(Y)]
 
-    # Y=0 처리
+    # y=0 처리
     DP[0][0] = grid[0][0]
     for x in range(1, X):
         DP[0][x] = DP[0][x-1] + grid[0][x]
 
-    # 1<=Y<N 처리
-    for y in range(1, Y):
+    # 1<=y<Y-1 처리
+    for y in range(1, Y-1):
         # 왼쪽 -> 오른쪽 처리
         DP[y][0] = DP[y-1][0] + grid[y][0]
         for x in range(1, X):
@@ -29,6 +29,13 @@ def solve(Y, X, grid):
         # DP에 반영
         for x in range(X):
             DP[y][x] = max(DP[y][x], right[x])
+
+    # y=Y-1 처리
+    if Y > 1:
+        endY = Y-1
+        DP[endY][0] = DP[endY-1][0] + grid[endY][0]
+        for x in range(1, X):
+            DP[endY][x] = max(DP[endY-1][x]+grid[endY][x], DP[endY][x-1]+grid[endY][x])
 
     return DP[Y-1][X-1]
 
